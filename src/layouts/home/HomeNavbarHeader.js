@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
+import Aos from 'aos';
+import 'aos/dist/aos.css';
+import { useDispatch } from 'react-redux';
+import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -27,6 +31,13 @@ const IconContact = styled(Icon)(({ theme }) => ({
   marginRight: '10px'
 }));
 function HomeNavbarHeader() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+    return function () {
+      return null;
+    };
+  }, []);
   return (
     <RootStyle>
       <BoxContact>
