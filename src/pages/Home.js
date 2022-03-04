@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Stack, styled, Typography } from '@mui/material';
 import { Scrollbar } from 'smooth-scrollbar-react';
 import { Carousel } from 'react-responsive-carousel';
+import { useNavigate } from 'react-router-dom';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import sloganHome from '../assets/data/sloganHome';
 import SloganHome from '../components/home/SloganHome';
@@ -24,6 +25,7 @@ const BoxSlogan = styled(Stack)(() => ({
   alignItems: 'center'
 }));
 function AboutUs() {
+  const navigate = useNavigate();
   const BoxAbout = styled(Box)(({ them }) => ({
     width: '100%',
     textAlign: 'center'
@@ -58,6 +60,9 @@ function AboutUs() {
       background: theme.palette.gray
     }
   }));
+  const goToAbout = () => {
+    navigate('/home/about');
+  };
   return (
     <BoxAbout>
       <Title>ST Restaurant - Ẩm thực Việt Nam</Title>
@@ -69,7 +74,7 @@ function AboutUs() {
         miệng vui vui. Hi vọng thực khách luôn cảm nhận tròn hương vị ẩm thực Việt và cả sự tận tâm
         ở ST Restaurant.
       </Information>
-      <ButtonSeeMore>Xem thêm</ButtonSeeMore>
+      <ButtonSeeMore onClick={goToAbout}>Xem thêm</ButtonSeeMore>
     </BoxAbout>
   );
 }

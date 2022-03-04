@@ -16,10 +16,6 @@ const navbarConfig = [
     path: '/home/about'
   },
   {
-    title: 'Sự kiện',
-    path: '/home/event'
-  },
-  {
     title: 'Liên hệ',
     path: '/home/contact'
   }

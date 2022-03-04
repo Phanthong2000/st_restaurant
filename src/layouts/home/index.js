@@ -22,21 +22,6 @@ const MainStyle = styled('div')(({ theme }) => ({
   overflow: 'hidden',
   display: 'flex'
 }));
-const ButtonIconChat = styled(IconButton)(({ theme }) => ({
-  background: theme.palette.white,
-  position: 'fixed',
-  zIndex: 999,
-  bottom: 30,
-  right: 30,
-  ':hover': {
-    background: theme.palette.lightgrey
-  }
-}));
-const IconChat = styled(Icon)(({ theme }) => ({
-  width: '40px',
-  height: '40px',
-  color: theme.palette.gray
-}));
 function HomeLayout() {
   const openChatBox = useSelector((state) => state.user.openChatBox);
   return (

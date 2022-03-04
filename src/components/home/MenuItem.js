@@ -21,7 +21,7 @@ function MenuItem({ menu, navbar }) {
   const chooseMenu = () => {
     navigate(`${menu.path}`);
   };
-  if (pathname === menu.path)
+  if (pathname.includes(menu.path))
     return (
       <RootStyle onClick={chooseMenu} sx={{ color: '#3C58C9', fontWeight: 'bold' }}>
         {menu.title}

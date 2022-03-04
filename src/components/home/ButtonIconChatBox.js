@@ -2,8 +2,17 @@ import { Icon } from '@iconify/react';
 import { Box, Card, IconButton, styled } from '@mui/material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { keyframes } from '@emotion/react';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 
+// const rotate = keyframes`
+//   from {
+//     transform: rotate(0deg)
+//   }
+//   to {
+//     transform: rotate(360deg)
+//   }
+// `;
 const ButtonIconChat = styled(Box)(({ theme }) => ({
   position: 'fixed',
   zIndex: 999,
@@ -13,6 +22,7 @@ const ButtonIconChat = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
+  // animation: `${rotate} 2s infinite alternate`
 }));
 const IconChat = styled(Icon)(({ theme }) => ({
   width: '40px',

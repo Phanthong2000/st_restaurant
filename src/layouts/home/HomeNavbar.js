@@ -62,7 +62,7 @@ function HomeNavbar() {
                 style={{
                   width: '50px',
                   height: '50px',
-                  color: navbar ? 'gray' : '#fff'
+                  color: 'gray'
                 }}
                 icon="line-md:menu"
               />

@@ -5,6 +5,7 @@ import Cart from './pages/Cart';
 import Contact from './pages/Contact';
 import Event from './pages/Event';
 import Food from './pages/Food';
+import FoodDetail from './pages/FoodDetail';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Order from './pages/Order';
@@ -37,7 +38,8 @@ export default function Router() {
         { path: 'event', element: <Event /> },
         { path: 'contact', element: <Contact /> },
         { path: 'about', element: <About /> },
-        { path: 'cart', element: <Cart /> }
+        { path: 'cart', element: <Cart /> },
+        { path: 'food-detail/:id', element: <FoodDetail /> }
       ]
     }
   ]);
