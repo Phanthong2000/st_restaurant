@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
+import toast, { Toaster } from 'react-hot-toast';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -30,7 +31,20 @@ const IconContact = styled(Icon)(({ theme }) => ({
   cursor: 'pointer',
   marginRight: '10px'
 }));
+function ToastDisplay({ content }) {
+  return (
+    <Box sx={{ zIndex: '200' }}>
+      <Typography sx={{ fontWeight: 'bold', fontSize: '20px' }}>{content}</Typography>
+    </Box>
+  );
+}
 function HomeNavbarHeader() {
+  const showToast = useSelector((state) => state.user.showToast);
+  const notify = (type, content) => {
+    if (type === 'error') {
+      return toast.error(<ToastDisplay content={content} />);
+    }
+  };
   const dispatch = useDispatch();
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -38,6 +52,12 @@ function HomeNavbarHeader() {
       return null;
     };
   }, []);
+  useEffect(() => {
+    if (showToast.content !== '') notify(showToast.type, showToast.content);
+    return function () {
+      return null;
+    };
+  }, [showToast]);
   return (
     <RootStyle>
       <BoxContact>
@@ -55,6 +75,7 @@ function HomeNavbarHeader() {
           ĐĂNG NHẬP
         </Typography>
       </Box>
+      <Toaster />
     </RootStyle>
   );
 }

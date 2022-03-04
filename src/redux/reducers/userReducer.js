@@ -1,7 +1,11 @@
-import { ACTION_USER_OPEN_CHAT_BOX } from '../actions/types';
+import { ACTION_USER_OPEN_CHAT_BOX, ACTION_USER_SHOW_HOT_TOAST } from '../actions/types';
 
 const defaultState = {
-  openChatBox: false
+  openChatBox: false,
+  showToast: {
+    content: '',
+    type: ''
+  }
 };
 
 // eslint-disable-next-line default-param-last
@@ -11,6 +15,11 @@ const userReducer = (state = defaultState, action) => {
       return {
         ...state,
         openChatBox: action.payload
+      };
+    case ACTION_USER_SHOW_HOT_TOAST:
+      return {
+        ...state,
+        showToast: action.payload
       };
     default:
       return state;

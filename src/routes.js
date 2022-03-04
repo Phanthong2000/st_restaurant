@@ -9,6 +9,7 @@ import FoodDetail from './pages/FoodDetail';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Order from './pages/Order';
+import OrderChooseFood from './pages/OrderChooseFood';
 import Register from './pages/Register';
 
 // ----------------------------------------------------------------------
@@ -35,11 +36,10 @@ export default function Router() {
         { path: 'app', element: <Home /> },
         { path: 'order', element: <Order /> },
         { path: 'food', element: <Food /> },
-        { path: 'event', element: <Event /> },
         { path: 'contact', element: <Contact /> },
         { path: 'about', element: <About /> },
-        { path: 'cart', element: <Cart /> },
-        { path: 'food-detail/:id', element: <FoodDetail /> }
+        { path: 'food-detail/:id', element: <FoodDetail /> },
+        { path: 'order-choose-food', element: <OrderChooseFood /> }
       ]
     }
   ]);

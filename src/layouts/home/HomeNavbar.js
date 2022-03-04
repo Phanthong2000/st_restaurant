@@ -16,7 +16,7 @@ const RootStyle = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(0, 3),
   top: 40,
-  zIndex: 999
+  zIndex: 100
 }));
 const Logo = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
@@ -68,14 +68,6 @@ function HomeNavbar() {
               />
             </IconButton>
           </Responsive>
-          <IconButton sx={{ color: '#fff' }}>
-            <Badge badgeContent={1} color="error">
-              <Icon
-                style={{ width: '30px', height: '30px', color: 'gray' }}
-                icon="ant-design:shopping-cart-outlined"
-              />
-            </Badge>
-          </IconButton>
         </BoxMenu>
       </RootStyle>
     );
