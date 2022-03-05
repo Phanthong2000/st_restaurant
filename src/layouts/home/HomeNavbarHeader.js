@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, styled, Typography } from '@mui/material';
+import { Avatar, Box, styled, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
+import { actionAuthLoggedIn } from '../../redux/actions/authAction';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -39,7 +41,10 @@ function ToastDisplay({ content }) {
   );
 }
 function HomeNavbarHeader() {
+  const navigate = useNavigate();
   const showToast = useSelector((state) => state.user.showToast);
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const [user, setUser] = useState({});
   const notify = (type, content) => {
     if (type === 'error') {
       return toast.error(<ToastDisplay content={content} />);
@@ -47,6 +52,9 @@ function HomeNavbarHeader() {
   };
   const dispatch = useDispatch();
   useEffect(() => {
+    if (loggedIn) {
+      setUser(JSON.parse(localStorage.getItem('user')));
+    }
     Aos.init({ duration: 1000 });
     return function () {
       return null;
@@ -58,6 +66,18 @@ function HomeNavbarHeader() {
       return null;
     };
   }, [showToast]);
+  const goToLogin = () => {
+    navigate('/login');
+  };
+  const goToProfile = () => {
+    navigate('/home/profile');
+  };
+  const logout = () => {
+    localStorage.removeItem('user');
+    dispatch(actionAuthLoggedIn(false));
+    navigate('/login');
+  };
+  if (user.id === undefined && loggedIn) return null;
   return (
     <RootStyle>
       <BoxContact>
@@ -65,16 +85,67 @@ function HomeNavbarHeader() {
         <IconContact icon="uit:youtube" />
         <IconContact icon="ph:instagram-logo" />
       </BoxContact>
-      <Box
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-      >
-        <IconContact style={{ marginRight: '5px' }} icon="fa:user-o" />
-        <Typography
-          sx={{ color: 'gray', fontSize: '11px', fontFamily: 'sans-serif', marginTop: '5px' }}
+      {loggedIn ? (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box
+            onClick={goToProfile}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              marginRight: '20px'
+            }}
+          >
+            <Avatar
+              sx={{ width: '30px', height: '30px' }}
+              src="https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg"
+            />
+            <Typography sx={{ fontWeight: 'bold', marginLeft: '10px' }}>
+              {user.hoTen.substring(user.hoTen.lastIndexOf(' '), user.hoTen.length)}
+            </Typography>
+          </Box>
+          <Box
+            onClick={logout}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              background: 'red',
+              padding: '5px',
+              borderRadius: '10px'
+            }}
+          >
+            <IconContact
+              style={{ marginRight: '5px', color: '#fff' }}
+              icon="ant-design:logout-outlined"
+            />
+            <Typography
+              sx={{ color: '#fff', fontSize: '11px', fontFamily: 'sans-serif', marginTop: '5px' }}
+            >
+              ĐĂNG XUẤT
+            </Typography>
+          </Box>
+        </Box>
+      ) : (
+        <Box
+          onClick={goToLogin}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
         >
-          ĐĂNG NHẬP
-        </Typography>
-      </Box>
+          <IconContact style={{ marginRight: '5px' }} icon="fa:user-o" />
+          <Typography
+            sx={{ color: 'gray', fontSize: '11px', fontFamily: 'sans-serif', marginTop: '5px' }}
+          >
+            ĐĂNG NHẬP
+          </Typography>
+        </Box>
+      )}
       <Toaster />
     </RootStyle>
   );

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Button, Stack, styled, Typography } from '@mui/material';
 import { Scrollbar } from 'smooth-scrollbar-react';
 import { Carousel } from 'react-responsive-carousel';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import sloganHome from '../assets/data/sloganHome';
@@ -79,6 +80,10 @@ function AboutUs() {
   );
 }
 function Home() {
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
+  useEffect(() => {
+    if (loggedIn) console.log(JSON.parse(localStorage.getItem('user')).id);
+  }, []);
   return (
     <RootStyle>
       <Box sx={{ width: widthScreen }}>

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Stack, styled, InputBase, Typography, Button } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import api from '../../assets/api/api';
 
 const RootStyle = styled(Stack)(({ theme }) => ({
   width: '100%',
@@ -57,7 +59,10 @@ const ButtonLogin = styled(Button)(({ theme }) => ({
 }));
 function LoginInput() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const showPassword = () => {
     setIsShowPassword(true);
   };
@@ -67,15 +72,74 @@ function LoginInput() {
   const goToRegister = () => {
     navigate('/register');
   };
+  const login = () => {
+    if (!username.match('^[a-zA-Z0-9]{6,32}$')) {
+      setError('Tên đăng nhập không hợp lệ');
+    } else if (!password.match('^[a-zA-Z0-9]{6,32}$')) setError('Mật khẩu không hợp lệ');
+    else {
+      axios
+        .get(`${api}taiKhoan/detail/tenDangNhap/${username}`)
+        .then((res) => {
+          if (res.data.vaiTro.tenVaiTro === 'CUSTOMER' && res.data.matKhau === password) {
+            localStorage.setItem(
+              'user',
+              JSON.stringify({
+                id: '622303dd5e6dda0d06f05e4f',
+                createAt: '2022-03-05T06:31:57.083+00:00',
+                updateAt: '2022-03-05T06:31:57.083+00:00',
+                hoTen: 'Phan Văn Thông',
+                email: null,
+                soDienThoai: '0971026910',
+                chungMinhThu: null,
+                diaChi: null,
+                gioiTinh: null,
+                ngaySinh: null,
+                anhDaiDien: 'https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg',
+                taiKhoan: {
+                  id: '622303dd5e6dda0d06f05e4e',
+                  createAt: '2022-03-05T06:31:57.053+00:00',
+                  updateAt: '2022-03-05T06:31:57.053+00:00',
+                  tenDangNhap: 'thong123',
+                  matKhau: '123456',
+                  trangThai: 'active',
+                  vaiTro: {
+                    id: '62218ccee2b13e0af35b067d',
+                    createAt: '2022-03-04T03:51:42.187+00:00',
+                    updateAt: '2022-03-04T03:51:42.187+00:00',
+                    tenVaiTro: 'CUSTOMER'
+                  }
+                },
+                loaiKhachHang: null
+              })
+            );
+            window.location.reload();
+          } else {
+            setError('Tài khoản không tồn tại');
+          }
+        })
+        .catch((err) => {
+          setError('Tài khoản không tồn tại');
+        });
+    }
+  };
   return (
     <RootStyle>
       <BoxInput>
         <IconInput icon="ant-design:user-outlined" />
-        <Input placeholder="Email hoặc số điện thoại" />
+        <Input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Tên đăng nhập"
+        />
       </BoxInput>
       <BoxInput>
         <IconInput icon="ant-design:key-outlined" />
-        <Input type={isShowPassword ? 'text' : 'password'} placeholder="Mật khẩu" />
+        <Input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          type={isShowPassword ? 'text' : 'password'}
+          placeholder="Mật khẩu"
+        />
         {!isShowPassword ? (
           <IconInput
             onClick={showPassword}
@@ -90,12 +154,15 @@ function LoginInput() {
           />
         )}
       </BoxInput>
+      <Box sx={{ width: '70%', marginTop: '10px' }}>
+        <Typography sx={{ color: 'red' }}>{error}</Typography>
+      </Box>
       <BoxLogin>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <ButtonOptions onClick={goToRegister}>Đăng ký</ButtonOptions>
           <ButtonOptions sx={{ marginLeft: '15px' }}>Quên mật khẩu?</ButtonOptions>
         </Box>
-        <ButtonLogin>Đăng nhập</ButtonLogin>
+        <ButtonLogin onClick={login}>Đăng nhập</ButtonLogin>
       </BoxLogin>
     </RootStyle>
   );

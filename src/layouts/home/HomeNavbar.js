@@ -92,14 +92,6 @@ function HomeNavbar() {
             />
           </IconButton>
         </Responsive>
-        <IconButton sx={{ color: '#fff' }}>
-          <Badge badgeContent={1} color="error">
-            <Icon
-              style={{ width: '30px', height: '30px', color: navbar && 'gray' }}
-              icon="ant-design:shopping-cart-outlined"
-            />
-          </Badge>
-        </IconButton>
       </BoxMenu>
     </RootStyle>
   );
