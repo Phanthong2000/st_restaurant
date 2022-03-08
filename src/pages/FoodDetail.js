@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, styled, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import foods from '../assets/data/foods';
+import api from '../assets/api/api';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -100,12 +102,13 @@ function FoodDetail() {
   const [avatar, setAvatar] = useState('');
   const navigate = useNavigate();
   const getFoodById = () => {
-    foods.forEach((item) => {
-      if (`${item.id}` === id) {
-        setFood(item);
-        setAvatar(item.images.at(0));
-      }
-    });
+    axios
+      .get(`${api}monAn/detail/${id}`)
+      .then((res) => {
+        setFood(res.data);
+        setAvatar(res.data.hinhAnh.at(0));
+      })
+      .catch((err) => console.log(err));
   };
   useEffect(() => {
     getFoodById();
@@ -140,7 +143,7 @@ function FoodDetail() {
         <BoxLeft>
           <AvatarFood src={avatar} />
           <BoxImages>
-            {food.images.map((item, index) => (
+            {food.hinhAnh.map((item, index) => (
               <ImageSmall
                 onMouseEnter={() => setAvatar(item)}
                 sx={{ outline: item === avatar && `5px solid #3C58C9` }}
@@ -152,8 +155,8 @@ function FoodDetail() {
         </BoxLeft>
         <BoxRight>
           <Box>
-            <NameFood>{food.name}</NameFood>
-            <PriceFood>{`${food.price.toLocaleString('es-US')} vnđ`}</PriceFood>
+            <NameFood>{food.tenMonAn}</NameFood>
+            <PriceFood>{`${food.donGia.toLocaleString('es-US')} vnđ`}</PriceFood>
             <BoxDescription>
               <Typography
                 sx={{ color: 'gray', fontSize: '16px', width: '20%', fontWeight: 'bold' }}
@@ -161,7 +164,7 @@ function FoodDetail() {
                 Mô tả
               </Typography>
               <Typography sx={{ fontSize: '14px', fontFamily: 'sans-serif', width: '80%' }}>
-                {food.description}
+                {food.moTa}
               </Typography>
             </BoxDescription>
           </Box>

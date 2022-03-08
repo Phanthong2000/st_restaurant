@@ -8,6 +8,7 @@ import 'aos/dist/aos.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 import { actionAuthLoggedIn } from '../../redux/actions/authAction';
+import UtilRedux from '../../util/UtilRedux';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -80,6 +81,7 @@ function HomeNavbarHeader() {
   if (user.id === undefined && loggedIn) return null;
   return (
     <RootStyle>
+      <UtilRedux />
       <BoxContact>
         <IconContact icon="simple-line-icons:social-facebook" />
         <IconContact icon="uit:youtube" />

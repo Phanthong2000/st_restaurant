@@ -1,6 +1,6 @@
 const profileSidebarConfig = [
   {
-    name: 'Thông tin người dùng',
+    name: 'Thông tin khách hàng',
     path: '/home/profile/detail'
   },
   {

@@ -76,6 +76,8 @@ const BoxAllFood = styled(Box)(({ theme }) => ({
 function Food() {
   const typeChosen = useSelector((state) => state.food.typeChosen);
   const dispatch = useDispatch();
+  const foods = useSelector((state) => state.food.foods);
+  const typefoods = useSelector((state) => state.food.typefoods);
   const chooseTypeAll = () => {
     dispatch(
       actionFoodGetTypeChosen({
@@ -104,15 +106,14 @@ function Food() {
         >
           Tất cả
         </ButtonSortPrice>
-        {typefood.map((item, index) => (
+        {typefoods.map((item, index) => (
           <TypeFoodItem key={index} type={item} />
         ))}
-        <ButtonSortPrice>Giá</ButtonSortPrice>
       </BoxSort>
       <BoxAllFood>
         {typeChosen.name === 'all' ? (
           <>
-            {typefood.map((item, index) => (
+            {typefoods.map((item, index) => (
               <BoxTypeFood key={index} type={item} />
             ))}
           </>

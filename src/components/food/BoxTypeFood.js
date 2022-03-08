@@ -26,11 +26,13 @@ BoxTypeFood.prototype = {
 };
 function BoxTypeFood({ type }) {
   const [allFoods, setAllFoods] = useState([]);
+  const foods = useSelector((state) => state.food.foods);
   const typeChosen = useSelector((state) => state.food.typeChosen);
+  const [name, setName] = useState('');
   const getAllFoodsByType = () => {
     const data = [];
     foods.forEach((food) => {
-      if (food.type === type.id) data.push(food);
+      if (food.loaiMonAn.id === type.id) data.push(food);
     });
     setAllFoods(data);
   };
@@ -39,10 +41,10 @@ function BoxTypeFood({ type }) {
     return function () {
       return null;
     };
-  }, [typeChosen]);
+  }, [typeChosen, foods]);
   return (
     <RootStyle>
-      <Separate>{type.name}</Separate>
+      <Separate>{typeChosen.name === 'all' ? type.tenLoaiMonAn : type.name}</Separate>
       <GridFood container>
         {allFoods.map((item, index) => (
           <FoodItem key={index} food={item} />

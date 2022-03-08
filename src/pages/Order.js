@@ -1,10 +1,23 @@
-import { Box, Button, Card, Input, InputBase, styled, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Card,
+  Input,
+  InputBase,
+  styled,
+  TextField,
+  Typography
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import validator from 'validator';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 import backgroundOrder from '../assets/images/backgroundOrder.png';
+import { actionOrderGetOrder } from '../redux/actions/orderAction';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -59,11 +72,54 @@ const ButtonOrder = styled(Button)(({ theme }) => ({
     background: theme.palette.black
   }
 }));
+const options = [
+  { label: '30p', time: 30 },
+  { label: '1h', time: 60 },
+  { label: '1h 30p', time: 90 }
+];
 function Order() {
   const [dateUse, setDateUse] = useState(new Date());
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [quantityCustomer, setQuantityCustomer] = useState('');
+  const [description, setDescription] = useState('');
+  const [time, setTime] = useState(options.at(0));
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [error, setError] = useState('');
+  const user = useSelector((state) => state.user.user);
+  useEffect(() => {
+    if (!loggedIn) navigate('/login');
+    else {
+      setFullName(user.hoTen);
+      setEmail(user.email);
+      setPhone(user.soDienThoai);
+    }
+    return function () {
+      return null;
+    };
+  }, [user]);
   const order = () => {
-    navigate('/home/order-choose-food');
+    if (dateUse.getTime() <= new Date().getTime()) setError('Ngày tháng, giờ phải sau hiện tại');
+    else if (!validator.isNumeric(quantityCustomer) || parseInt(quantityCustomer, 10) <= 0)
+      setError('Số khách phải lớn hơn 0');
+    else {
+      setError('');
+      dispatch(
+        actionOrderGetOrder({
+          customerName: fullName,
+          email,
+          phone,
+          date: dateUse,
+          quantityCustomer,
+          timeUse: time,
+          description
+        })
+      );
+      navigate('/home/order-choose-food');
+    }
   };
   return (
     <RootStyle>
@@ -74,15 +130,33 @@ function Order() {
             <Title>Đặt bàn</Title>
             <InputWapper>
               <Typography sx={{ fontSize: '16px' }}>Họ tên:</Typography>
-              <InputInfo fullWidth placeholder="Aa" />
+              <InputInfo
+                disabled
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                fullWidth
+                placeholder="Aa"
+              />
             </InputWapper>
             <InputWapper>
               <Typography sx={{ fontSize: '16px' }}>Email:</Typography>
-              <InputInfo fullWidth placeholder="Aa" />
+              <InputInfo
+                disabled
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                placeholder="Aa"
+              />
             </InputWapper>
             <InputWapper>
               <Typography sx={{ fontSize: '16px' }}>Số điện thoại:</Typography>
-              <InputInfo fullWidth placeholder="0123456789" />
+              <InputInfo
+                disabled
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                fullWidth
+                placeholder="0123456789"
+              />
             </InputWapper>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
@@ -93,7 +167,7 @@ function Order() {
                   showTimeSelect
                   dateFormat="dd/MM/yyyy, hh:mm a"
                   onChange={(newValue) => {
-                    console.log(newValue.getTime());
+                    console.log(newValue);
                     setDateUse(newValue);
                   }}
                 />
@@ -102,19 +176,62 @@ function Order() {
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
                 <Typography sx={{ fontSize: '16px' }}>Số khách:</Typography>
-                <InputInfo fullWidth placeholder="0" />
+                <InputInfo
+                  value={quantityCustomer}
+                  onChange={(e) => setQuantityCustomer(e.target.value)}
+                  fullWidth
+                  placeholder="0"
+                />
               </InputWapper>
               <InputWapper>
                 <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
-                <InputInfo fullWidth placeholder="0" />
+                <Autocomplete
+                  value={time}
+                  disableClearable
+                  onChange={(event, newValue) => {
+                    console.log(newValue);
+                    setTime(newValue);
+                  }}
+                  sx={{ zIndex: 4 }}
+                  getOptionLabel={(option) => option.label}
+                  options={options}
+                  renderOption={(params, option) => (
+                    <Box sx={{ background: '#fff' }} {...params}>
+                      {option.label}
+                    </Box>
+                  )}
+                  disablePortal
+                  id="combo-box-demo"
+                  renderInput={(params) => (
+                    <TextField
+                      variant="standard"
+                      error={error === 'Vui lòng chọn loại món ăn'}
+                      sx={{ color: '#fff' }}
+                      {...params}
+                    />
+                  )}
+                />
               </InputWapper>
             </Box>
             <InputWapper>
               <Typography sx={{ fontSize: '16px' }}>Ghi chú:</Typography>
-              <InputInfo multiline minRows={3} maxRows={3} fullWidth placeholder="Aa" />
+              <InputInfo
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+                multiline
+                minRows={3}
+                maxRows={3}
+                fullWidth
+                placeholder="Aa"
+              />
             </InputWapper>
             <Box
-              sx={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '10px' }}
+              sx={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '5px' }}
+            >
+              <Typography sx={{ color: 'red' }}>{error}</Typography>
+            </Box>
+            <Box
+              sx={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '5px' }}
             >
               <ButtonOrder onClick={order}>Đặt bàn</ButtonOrder>
             </Box>

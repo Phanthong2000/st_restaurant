@@ -81,38 +81,13 @@ function LoginInput() {
         .get(`${api}taiKhoan/detail/tenDangNhap/${username}`)
         .then((res) => {
           if (res.data.vaiTro.tenVaiTro === 'CUSTOMER' && res.data.matKhau === password) {
-            localStorage.setItem(
-              'user',
-              JSON.stringify({
-                id: '622303dd5e6dda0d06f05e4f',
-                createAt: '2022-03-05T06:31:57.083+00:00',
-                updateAt: '2022-03-05T06:31:57.083+00:00',
-                hoTen: 'Phan Văn Thông',
-                email: null,
-                soDienThoai: '0971026910',
-                chungMinhThu: null,
-                diaChi: null,
-                gioiTinh: null,
-                ngaySinh: null,
-                anhDaiDien: 'https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg',
-                taiKhoan: {
-                  id: '622303dd5e6dda0d06f05e4e',
-                  createAt: '2022-03-05T06:31:57.053+00:00',
-                  updateAt: '2022-03-05T06:31:57.053+00:00',
-                  tenDangNhap: 'thong123',
-                  matKhau: '123456',
-                  trangThai: 'active',
-                  vaiTro: {
-                    id: '62218ccee2b13e0af35b067d',
-                    createAt: '2022-03-04T03:51:42.187+00:00',
-                    updateAt: '2022-03-04T03:51:42.187+00:00',
-                    tenVaiTro: 'CUSTOMER'
-                  }
-                },
-                loaiKhachHang: null
+            axios
+              .get(`${api}khachHang/detail/tenDangNhap/${username}`)
+              .then((resKH) => {
+                localStorage.setItem('user', JSON.stringify(resKH.data));
+                window.location.reload();
               })
-            );
-            window.location.reload();
+              .catch((err) => console.log(err));
           } else {
             setError('Tài khoản không tồn tại');
           }

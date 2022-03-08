@@ -61,8 +61,8 @@ FoodItem.prototype = {
 function FoodItem({ food }) {
   const navigate = useNavigate();
   const checkDescriptionLength = () => {
-    if (food.description.length < 200) return `${food.description}`;
-    return `${food.description.substring(0, 200)}...`;
+    if (food.moTa.length < 200) return `${food.moTa}`;
+    return `${food.moTa.substring(0, 200)}...`;
   };
   const goToFoodDetail = () => {
     navigate(`/home/food-detail/${food.id}`);
@@ -70,12 +70,12 @@ function FoodItem({ food }) {
   return (
     <RootStyle data-aos="zoom-in" item xs={12} sm={6} md={6} lg={4} xl={4}>
       <BoxFood sx={{ '&:hover': { boxShadow: 20 } }}>
-        <AvatarFood onClick={goToFoodDetail} src={food.images.at(0)} />
+        <AvatarFood onClick={goToFoodDetail} src={food.hinhAnh.at(0)} />
         <BoxNamePrice>
-          <NameFood>{food.name}</NameFood>
+          <NameFood>{food.tenMonAn}</NameFood>
           <PriceFood>
             <b style={{ fontSize: '20px', color: '#000' }}>Giá: </b>
-            {`${food.price.toLocaleString('es-US')} vnđ`}
+            {`${food.donGia.toLocaleString('es-US')} vnđ`}
           </PriceFood>
         </BoxNamePrice>
         <Typography maxHeight="120px">{checkDescriptionLength()}</Typography>

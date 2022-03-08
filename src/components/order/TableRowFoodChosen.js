@@ -24,7 +24,7 @@ TableRowFoodChosen.prototype = {
   index: PropTypes.number
 };
 function TableRowFoodChosen({ cell, index }) {
-  const getSubTotal = () => cell.quantity * cell.food.price;
+  const getSubTotal = () => cell.quantity * cell.food.donGia;
   const dispatch = useDispatch();
   const foods = useSelector((state) => state.order.foods);
   const deleteFoodChosen = () => {
@@ -63,8 +63,8 @@ function TableRowFoodChosen({ cell, index }) {
   return (
     <RootStyle>
       <Cell>{index + 1}</Cell>
-      <Cell>{cell.food.name}</Cell>
-      <Cell>{cell.food.price.toLocaleString('es-US')}</Cell>
+      <Cell>{cell.food.tenMonAn}</Cell>
+      <Cell>{cell.food.donGia.toLocaleString('es-US')}</Cell>
       <Cell sx={{ display: 'flex', alignItems: 'center' }}>
         <IconQuantity onClick={minusQuantity} icon="akar-icons:circle-minus-fill" />
         <Typography sx={{ width: '30px', textAlign: 'center' }}>{cell.quantity}</Typography>

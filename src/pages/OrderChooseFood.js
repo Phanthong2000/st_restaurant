@@ -149,6 +149,8 @@ function OrderChooseFood() {
   const book = useSelector((state) => state.order.book);
   const navigate = useNavigate();
   const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
+  const typefoods = useSelector((state) => state.food.typefoods);
+  const user = useSelector((state) => state.user.user);
   useEffect(() => {
     if (book.customerName === '') navigate('/home/order');
     return function () {
@@ -210,6 +212,17 @@ function OrderChooseFood() {
           type: 'error'
         })
       );
+    } else {
+      const order = {
+        khachHang: {
+          id: user.id
+        },
+        soLuongKhach: book.quantityCustomer,
+        thoiGianDuKienSuDung: book.timeUse.time,
+        thoiGianNhanBan: book.date,
+        trangThai: '0'
+      };
+      console.log(order);
     }
   };
   return (
@@ -253,7 +266,7 @@ function OrderChooseFood() {
         </InputWapper>
         <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
-          <InputInfo disabled value={book.timeUse} fullWidth placeholder="0" />
+          <InputInfo disabled value={book.timeUse.label} fullWidth placeholder="0" />
         </InputWapper>
         <InputWapper item xs={12} sm={12} md={12} lg={6} xl={6}>
           <Typography sx={{ fontSize: '16px' }}>Ghi chú:</Typography>
@@ -331,15 +344,14 @@ function OrderChooseFood() {
           >
             Tất cả
           </ButtonSortPrice>
-          {typefood.map((item, index) => (
+          {typefoods.map((item, index) => (
             <TypeFoodItem key={index} type={item} />
           ))}
-          <ButtonSortPrice>Giá</ButtonSortPrice>
         </BoxSort>
         <BoxAllFood>
           {typeChosen.name === 'all' ? (
             <>
-              {typefood.map((item, index) => (
+              {typefoods.map((item, index) => (
                 <BoxTypeFoodOrder key={index} type={item} />
               ))}
             </>

@@ -47,13 +47,8 @@ const Phone = styled(Typography)(({ theme }) => ({
   marginLeft: '5px'
 }));
 function Profile() {
-  const [user, setUser] = useState({});
   const loggedIn = useSelector((state) => state.auth.loggedIn);
-  useEffect(() => {
-    if (loggedIn) {
-      setUser(JSON.parse(localStorage.getItem('user')));
-    }
-  }, []);
+  const user = useSelector((state) => state.user.user);
   return (
     <RootStyle>
       <ProfileSidebar>

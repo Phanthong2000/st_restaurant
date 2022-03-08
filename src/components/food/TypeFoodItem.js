@@ -28,16 +28,16 @@ function TypeFoodItem({ type }) {
     dispatch(
       actionFoodGetTypeChosen({
         id: type.id,
-        name: type.name
+        name: type.tenLoaiMonAn
       })
     );
   };
   return (
     <RootStyle
-      sx={typeChosen.name === type.name && { background: '#3C58C9', color: '#fff' }}
+      sx={typeChosen.name === type.tenLoaiMonAn && { background: '#3C58C9', color: '#fff' }}
       onClick={chooseType}
     >
-      {type.name}
+      {type.tenLoaiMonAn}
     </RootStyle>
   );
 }

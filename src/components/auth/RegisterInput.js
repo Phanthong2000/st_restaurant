@@ -106,6 +106,7 @@ function RegisterInput() {
                       'https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg',
                     hoTen: fullname,
                     soDienThoai: phone,
+                    gioiTinh: 'Nam',
                     taiKhoan: {
                       id: resTaiKhoan.data.id
                     }

@@ -1,6 +1,7 @@
 import { Box, Grid, styled, Typography } from '@mui/material';
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { useSelector } from 'react-redux';
 import MenuAbout from '../components/about/MenuAbout';
 import menu from '../assets/data/menu';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
@@ -82,6 +83,7 @@ function BoxMenu() {
       fontSize: '30px'
     }
   }));
+  const typefoods = useSelector((state) => state.food.typefoods);
   return (
     <Menu>
       <BoxLeft>
@@ -97,7 +99,7 @@ function BoxMenu() {
           </Typography>
         </Box>
         <Grid sx={{ marginTop: '20px' }} container>
-          {menu.map((item, index) => (
+          {typefoods.map((item, index) => (
             <MenuAbout key={index} menu={item} />
           ))}
         </Grid>

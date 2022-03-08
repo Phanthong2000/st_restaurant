@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Card, Grid, styled, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import typefood from '../../assets/data/typefood';
 import { actionFoodGetTypeChosen } from '../../redux/actions/foodAction';
 
@@ -39,19 +39,20 @@ function MenuAbout({ menu }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const chooseTypeFood = () => {
-    typefood.forEach((type) => {
-      if (menu.name.toLowerCase().includes(type.name.toLowerCase())) {
-        dispatch(actionFoodGetTypeChosen(type));
-        navigate('/home/food');
-      }
-    });
+    dispatch(
+      actionFoodGetTypeChosen({
+        id: menu.id,
+        name: menu.tenLoaiMonAn
+      })
+    );
+    navigate('/home/food');
   };
   return (
     <RootStyle xs={6} sm={6} md={6} lg={3} xl={3}>
       <BoxMenu sx={{ '&:hover': { boxShadow: 10 } }}>
         <ImageMenu src={menu.image} />
         <Typography sx={{ fontWeight: 'bold', fontSize: '17px', marginTop: '5px' }}>
-          {menu.name}
+          {menu.tenLoaiMonAn}
         </Typography>
         <ButtonWatch onClick={chooseTypeFood}>Xem ngay</ButtonWatch>
       </BoxMenu>

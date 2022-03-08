@@ -8,13 +8,13 @@ import {
 
 const defaultState = {
   book: {
-    customerName: 'customerName',
-    email: 'email',
-    phone: 'phone',
+    customerName: '',
+    email: '',
+    phone: '',
     date: 0,
-    quantityCustomer: 10,
-    timeUse: 60,
-    description: 'description'
+    quantityCustomer: 0,
+    timeUse: 0,
+    description: ''
   },
   foods: [],
   modalInformationFood: {

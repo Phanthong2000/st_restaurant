@@ -84,15 +84,14 @@ function SmallImage({ image, avatar, hover }) {
 }
 function ModalInformationFood() {
   const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
-  const [avatarFood, setAvatarFood] = useState(modalInformationFood.food.images.at(0));
+  const [avatarFood, setAvatarFood] = useState(modalInformationFood.food.hinhAnh.at(0));
   const dispatch = useDispatch();
   const hoverSmallImage = (image) => {
     setAvatarFood(image);
   };
   const checkDescriptionLength = () => {
-    if (modalInformationFood.food.description.length < 200)
-      return `${modalInformationFood.food.description}`;
-    return `${modalInformationFood.food.description.substring(0, 200)}...`;
+    if (modalInformationFood.food.moTa.length < 200) return `${modalInformationFood.food.moTa}`;
+    return `${modalInformationFood.food.moTa.substring(0, 200)}...`;
   };
   const chooseFood = () => {
     dispatch(
@@ -145,7 +144,7 @@ function ModalInformationFood() {
           <BoxLeft>
             <AvatarFood src={avatarFood} />
             <BoxSmallImage>
-              {modalInformationFood.food.images.map((item, index) => (
+              {modalInformationFood.food.hinhAnh.map((item, index) => (
                 <SmallImage
                   hover={() => hoverSmallImage(item)}
                   avatar={avatarFood}
@@ -158,9 +157,9 @@ function ModalInformationFood() {
           <BoxRight>
             <Box>
               <Typography sx={{ fontWeight: 'bold', fontSize: '25px', fontFamily: 'sans-serif' }}>
-                {modalInformationFood.food.name}
+                {modalInformationFood.food.tenMonAn}
               </Typography>
-              <PriceFood>{`${modalInformationFood.food.price.toLocaleString(
+              <PriceFood>{`${modalInformationFood.food.donGia.toLocaleString(
                 'es-Us'
               )} vnd`}</PriceFood>
               <Typography>{checkDescriptionLength()}</Typography>

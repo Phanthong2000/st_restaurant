@@ -80,10 +80,6 @@ function AboutUs() {
   );
 }
 function Home() {
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
-  useEffect(() => {
-    if (loggedIn) console.log(JSON.parse(localStorage.getItem('user')).id);
-  }, []);
   return (
     <RootStyle>
       <Box sx={{ width: widthScreen }}>
