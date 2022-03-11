@@ -26,7 +26,6 @@ TableRowFoodChosen.prototype = {
 function TableRowFoodChosen({ cell, index }) {
   const getSubTotal = () => cell.quantity * cell.food.donGia;
   const dispatch = useDispatch();
-  const foods = useSelector((state) => state.order.foods);
   const deleteFoodChosen = () => {
     dispatch(actionOrderDeleteFoods(index));
   };

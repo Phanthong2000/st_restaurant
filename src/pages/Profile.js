@@ -21,7 +21,7 @@ const BoxAvatar = styled(Card)(({ theme }) => ({
 const ProfileSidebar = styled(Box)(({ theme }) => ({
   width: '300px',
   background: theme.palette.background,
-  height: `${heightScreen - 120}px`
+  height: '100%'
 }));
 const SpaceTop = styled(Box)(({ theme }) => ({
   width: '100%',

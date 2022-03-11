@@ -12,7 +12,16 @@ import {
   RadioGroup,
   Radio
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import DatePicker from 'react-datepicker';
+import axios from 'axios';
+import moment from 'moment';
+import api from '../../assets/api/api';
+import {
+  actionGetUser,
+  actionUserShowHotToast,
+  actionUserSnackbar
+} from '../../redux/actions/userAction';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -77,13 +86,14 @@ const ButtonSaveChangeChange = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   background: theme.palette.main,
   color: theme.palette.white,
-  marginTop: '20px',
+  marginTop: '10px',
   fontWeight: 'bold',
   ':hover': {
     background: theme.palette.mainHover
   }
 }));
 function Detail() {
+  const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -92,9 +102,14 @@ function Detail() {
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
   const [avatar, setAvatar] = useState('');
+  const [username, setUsername] = useState('');
+  const [identification, setIdentification] = useState('');
   const user = useSelector((state) => state.user.user);
+  const [error, setError] = useState('');
   useEffect(() => {
-    if (loggedIn) {
+    if (loggedIn && user.taiKhoan !== undefined) {
+      console.log(user.taiKhoan.tenDangNhap);
+      setUsername(user.taiKhoan.tenDangNhap);
       setFullName(user.hoTen);
       setAvatar(user.anhDaiDien);
       setPhone(user.soDienThoai);
@@ -102,11 +117,50 @@ function Detail() {
       setAddress(user.diaChi);
       setGender(user.gioiTinh);
       setBirthday(user.ngaySinh);
+      setIdentification(user.chungMinhThu);
     }
     return function () {
       return null;
     };
   }, [user]);
+  const save = () => {
+    if (fullName === '') {
+      setError('Vui lòng nhập họ tên');
+    } else if (!phone.match('^0[0-9]{8,10}$')) {
+      setError('Vui lòng nhập số điện thoại');
+    } else {
+      axios
+        .get(`${api}khachHang/detail/${user.id}`)
+        .then((res) => {
+          axios
+            .put(`${api}khachHang/edit`, {
+              ...res.data,
+              hoTen: fullName,
+              soDienThoai: phone,
+              email,
+              diaChi: address,
+              chungMinhThu: identification,
+              ngaySinh: moment(birthday).format(),
+              gioiTinh: gender
+            })
+            .then((res) => {
+              dispatch(
+                actionUserSnackbar({
+                  status: true,
+                  content: 'Cập nhật thông tin thành công',
+                  type: 'success'
+                })
+              );
+              window.location.reload();
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+  if (user.taiKhoan === undefined) return null;
   return (
     <RootStyle>
       <BoxDetail>
@@ -119,8 +173,10 @@ function Detail() {
         </BoxTitle>
         <BoxContent>
           <BoxInput>
+            <Input disabled fullWidth value={username} label="Tên đăng nhập" />
+          </BoxInput>
+          <BoxInput>
             <Input
-              disabled
               fullWidth
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -129,7 +185,6 @@ function Detail() {
           </BoxInput>
           <BoxInput>
             <Input
-              disabled
               fullWidth
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -138,16 +193,22 @@ function Detail() {
           </BoxInput>
           <BoxInput>
             <Input
-              disabled
               fullWidth
               value={email}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               label="Email"
             />
           </BoxInput>
           <BoxInput>
             <Input
-              disabled
+              fullWidth
+              value={identification}
+              onChange={(e) => setIdentification(e.target.value)}
+              label="Chứng minh thư"
+            />
+          </BoxInput>
+          <BoxInput>
+            <Input
               fullWidth
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -155,12 +216,13 @@ function Detail() {
             />
           </BoxInput>
           <BoxInput>
-            <Input
-              disabled
-              fullWidth
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              label="Ngày sinh"
+            <DatePicker
+              customInput={<Input label="Ngày sinh" fullWidth />}
+              selected={Date.parse(birthday)}
+              dateFormat="dd/MM/yyyy"
+              onChange={(newValue) => {
+                setBirthday(newValue);
+              }}
             />
           </BoxInput>
           <BoxInput>
@@ -179,8 +241,9 @@ function Detail() {
               </RadioGroup>
             </FormControl>
           </BoxInput>
+          <Typography sx={{ width: '100%', textAlign: 'center', color: 'red' }}>{error}</Typography>
           <BoxInput>
-            <ButtonSaveChangeChange>Lưu</ButtonSaveChangeChange>
+            <ButtonSaveChangeChange onClick={save}>Lưu</ButtonSaveChangeChange>
           </BoxInput>
         </BoxContent>
       </BoxDetail>

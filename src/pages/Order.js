@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -75,7 +76,11 @@ const ButtonOrder = styled(Button)(({ theme }) => ({
 const options = [
   { label: '30p', time: 30 },
   { label: '1h', time: 60 },
-  { label: '1h 30p', time: 90 }
+  { label: '1h 30p', time: 90 },
+  { label: '2h', time: 120 },
+  { label: '2h 30p', time: 150 },
+  { label: '3h', time: 180 },
+  { label: '3h 30p', time: 210 }
 ];
 function Order() {
   const [dateUse, setDateUse] = useState(new Date());
@@ -113,7 +118,7 @@ function Order() {
           email,
           phone,
           date: dateUse,
-          quantityCustomer,
+          quantityCustomer: parseInt(quantityCustomer, 10),
           timeUse: time,
           description
         })
@@ -167,7 +172,6 @@ function Order() {
                   showTimeSelect
                   dateFormat="dd/MM/yyyy, hh:mm a"
                   onChange={(newValue) => {
-                    console.log(newValue);
                     setDateUse(newValue);
                   }}
                 />

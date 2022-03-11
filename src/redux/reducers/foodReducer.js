@@ -1,7 +1,8 @@
 import {
   ACTION_FOOD_GET_TYPE_CHOSEN,
   ACTION_FOOD_GET_ALL_FOODS,
-  ACTION_FOOD_GET_ALL_TYPE_FOODS
+  ACTION_FOOD_GET_ALL_TYPE_FOODS,
+  ACTION_FOOD_GET_ALL_FOODS_BY_NAME
 } from '../actions/types';
 
 const defaultState = {
@@ -10,7 +11,8 @@ const defaultState = {
     name: 'all'
   },
   foods: [],
-  typefoods: []
+  typefoods: [],
+  foodsByName: []
 };
 
 // eslint-disable-next-line default-param-last
@@ -30,6 +32,11 @@ const foodReducer = (state = defaultState, action) => {
       return {
         ...state,
         typefoods: action.payload
+      };
+    case ACTION_FOOD_GET_ALL_FOODS_BY_NAME:
+      return {
+        ...state,
+        foodsByName: action.payload
       };
     default:
       return state;

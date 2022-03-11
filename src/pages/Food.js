@@ -1,11 +1,11 @@
 import { Icon } from '@iconify/react';
 import { Box, Button, Card, InputBase, styled, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import typefood from '../assets/data/typefood';
 import TypeFoodItem from '../components/food/TypeFoodItem';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
-import { actionFoodGetTypeChosen } from '../redux/actions/foodAction';
+import { actionFoodGetTypeChosen, actionGetFoodsByName } from '../redux/actions/foodAction';
 import BoxTypeFood from '../components/food/BoxTypeFood';
 
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -76,8 +76,14 @@ const BoxAllFood = styled(Box)(({ theme }) => ({
 function Food() {
   const typeChosen = useSelector((state) => state.food.typeChosen);
   const dispatch = useDispatch();
-  const foods = useSelector((state) => state.food.foods);
   const typefoods = useSelector((state) => state.food.typefoods);
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    console.log();
+    return function () {
+      dispatch(actionGetFoodsByName(''));
+    };
+  }, []);
   const chooseTypeAll = () => {
     dispatch(
       actionFoodGetTypeChosen({
@@ -86,11 +92,20 @@ function Food() {
       })
     );
   };
+  const searchFood = (text) => {
+    setSearch(text);
+    dispatch(actionGetFoodsByName(text));
+  };
   return (
     <RootStyle>
       <BoxBreadcrumbs name="Món ăn" />
       <BoxSearch>
-        <InputSearch fullWidth placeholder="Tìm kiếm món ăn" />
+        <InputSearch
+          value={search}
+          onChange={(e) => searchFood(e.target.value)}
+          fullWidth
+          placeholder="Tìm kiếm món ăn"
+        />
         <BoxIconSearch>
           <Icon
             style={{ color: '#fff', width: '30px', height: '30px' }}

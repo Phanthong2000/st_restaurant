@@ -29,7 +29,7 @@ const BoxContact = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '500px',
   backgroundSize: '100% 100%',
-  backgroundImage: `url(http://xaydungtruongphatthinh.com/wp-content/uploads/2020/04/S%E1%BB%ADa-Ch%E1%BB%AFa-Nh%C3%A0-H%C3%A0ng-Tr%E1%BB%8Dn-G%C3%B3i-3.jpg)`,
+  backgroundImage: `url(http://wallpaperstock.net/delightful-vintage-restaurant_wallpapers_50547_1920x1080.jpg)`,
   backgroundRepeat: 'no-repeat',
   backgroundAttachment: 'fixed',
   display: 'flex',

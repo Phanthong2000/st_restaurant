@@ -28,11 +28,11 @@ BoxTypeFoodOrder.prototype = {
 function BoxTypeFoodOrder({ type }) {
   const [allFoods, setAllFoods] = useState([]);
   const typeChosen = useSelector((state) => state.food.typeChosen);
-  const foods = useSelector((state) => state.food.foods);
+  const foods = useSelector((state) => state.food.foodsByName);
   const getAllFoodsByType = () => {
     const data = [];
     foods.forEach((food) => {
-      if (food.loaiMonAn.id === type.id) data.push(food);
+      if (food.loaiMonAn.id === type.id && food.trangThai === 'Đang bán') data.push(food);
     });
     setAllFoods(data);
   };

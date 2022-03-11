@@ -1,7 +1,8 @@
 import {
   ACTION_USER_OPEN_CHAT_BOX,
   ACTION_USER_SHOW_HOT_TOAST,
-  ACTION_USER_GET_USER
+  ACTION_USER_GET_USER,
+  ACTION_USER_SNACKBAR
 } from '../actions/types';
 
 const defaultState = {
@@ -10,7 +11,12 @@ const defaultState = {
     content: '',
     type: ''
   },
-  user: {}
+  user: {},
+  snackbar: {
+    status: false,
+    content: '',
+    type: 'success'
+  }
 };
 
 // eslint-disable-next-line default-param-last
@@ -30,6 +36,11 @@ const userReducer = (state = defaultState, action) => {
       return {
         ...state,
         showToast: action.payload
+      };
+    case ACTION_USER_SNACKBAR:
+      return {
+        ...state,
+        snackbar: action.payload
       };
     default:
       return state;

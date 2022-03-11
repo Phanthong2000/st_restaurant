@@ -13,6 +13,8 @@ import OrderChooseFood from './pages/OrderChooseFood';
 import Register from './pages/Register';
 import Detail from './components/profile/Detail';
 import HistoryOrder from './components/profile/HistoryOrder';
+import ForgetPassword from './pages/ForgetPassword';
+import Error from './pages/Error';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +31,10 @@ export default function Router() {
     {
       path: '/register',
       element: <Register />
+    },
+    {
+      path: '/forgot-password',
+      element: <ForgetPassword />
     },
     {
       path: '/home',
@@ -52,6 +58,8 @@ export default function Router() {
           ]
         }
       ]
-    }
+    },
+    { path: '/error', element: <Error /> },
+    { path: '*', element: <Navigate to="/error" /> }
   ]);
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
@@ -22,14 +22,17 @@ import {
   Typography
 } from '@mui/material';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import axios from 'axios';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
-import typefood from '../assets/data/typefood';
 import TypeFoodItem from '../components/food/TypeFoodItem';
-import { actionFoodGetTypeChosen } from '../redux/actions/foodAction';
+import { actionFoodGetTypeChosen, actionGetFoodsByName } from '../redux/actions/foodAction';
 import BoxTypeFoodOrder from '../components/order/BoxTypeFoodOrder';
 import TableRowFoodChosen from '../components/order/TableRowFoodChosen';
-import { actionUserShowHotToast } from '../redux/actions/userAction';
+import { actionUserShowHotToast, actionUserSnackbar } from '../redux/actions/userAction';
 import ModalInformationFood from '../components/order/ModalInformationFood';
+import { actionOrderGetOrder, actionOrderSetFoods } from '../redux/actions/orderAction';
+import api from '../assets/api/api';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -151,10 +154,22 @@ function OrderChooseFood() {
   const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
   const typefoods = useSelector((state) => state.food.typefoods);
   const user = useSelector((state) => state.user.user);
+  const [search, setSearch] = useState('');
   useEffect(() => {
     if (book.customerName === '') navigate('/home/order');
     return function () {
-      return null;
+      dispatch(
+        actionOrderGetOrder({
+          customerName: '',
+          email: '',
+          phone: '',
+          date: 0,
+          quantityCustomer: 0,
+          timeUse: 0,
+          description: ''
+        })
+      );
+      dispatch(actionOrderSetFoods([]));
     };
   }, []);
 
@@ -194,13 +209,17 @@ function OrderChooseFood() {
       align: 'right'
     }
   ];
+  const searchFood = (text) => {
+    setSearch(text);
+    dispatch(actionGetFoodsByName(text));
+  };
   const getTotal = () => {
     if (foods.length === 0) {
       return 0;
     }
     let total = 0;
     foods.forEach((food) => {
-      total += food.food.price * food.quantity;
+      total += food.food.donGia * food.quantity;
     });
     return total;
   };
@@ -213,16 +232,55 @@ function OrderChooseFood() {
         })
       );
     } else {
+      const listChiTietDonDatBan = [];
+      foods.forEach((food) => {
+        listChiTietDonDatBan.push({
+          monAn: {
+            id: food.food.id
+          },
+          soLuong: food.quantity
+        });
+      });
       const order = {
         khachHang: {
           id: user.id
         },
         soLuongKhach: book.quantityCustomer,
         thoiGianDuKienSuDung: book.timeUse.time,
-        thoiGianNhanBan: book.date,
-        trangThai: '0'
+        thoiGianNhanBan: moment(book.date).format(),
+        trangThai: '0',
+        ghiChu: book.description,
+        listChiTietDonDatBan
       };
-      console.log(order);
+      axios
+        .post(`${api}donDatBan/create`, {
+          ...order
+        })
+        .then((res) => {
+          console.log(res.data.createAt);
+          console.log(moment(new Date().getTime()).format());
+          dispatch(
+            actionOrderGetOrder({
+              customerName: '',
+              email: '',
+              phone: '',
+              date: 0,
+              quantityCustomer: 0,
+              timeUse: 0,
+              description: ''
+            })
+          );
+          dispatch(actionOrderSetFoods([]));
+          dispatch(
+            actionUserSnackbar({
+              status: true,
+              content: 'Đặt bàn thành công',
+              type: 'success'
+            })
+          );
+          navigate('/home/app');
+        })
+        .catch((err) => console.log(err));
     }
   };
   return (
@@ -251,7 +309,7 @@ function OrderChooseFood() {
           <DatePicker
             disabled
             customInput={<InputInfo fullWidth />}
-            selected={new Date()}
+            selected={book.date}
             showTimeSelect
             dateFormat="dd/MM/yyyy, hh:mm a"
             // onChange={(newValue) => {
@@ -328,7 +386,12 @@ function OrderChooseFood() {
           </Paper>
         </BoxTable>
         <BoxSearch>
-          <InputSearch fullWidth placeholder="Tìm kiếm món ăn" />
+          <InputSearch
+            onChange={(e) => searchFood(e.target.value)}
+            value={search}
+            fullWidth
+            placeholder="Tìm kiếm món ăn"
+          />
           <BoxIconSearch>
             <Icon
               style={{ color: '#fff', width: '30px', height: '30px' }}

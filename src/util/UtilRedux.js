@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionGetUser } from '../redux/actions/userAction';
-import { actionGetAllFoods, actionGetAllTypeFoods } from '../redux/actions/foodAction';
+import {
+  actionGetAllFoods,
+  actionGetAllTypeFoods,
+  actionGetFoodsByName
+} from '../redux/actions/foodAction';
+import { actionGetAllBooks } from '../redux/actions/orderAction';
 
 function UtilRedux() {
   const dispatch = useDispatch();
@@ -9,9 +14,10 @@ function UtilRedux() {
   useEffect(() => {
     if (loggedIn) {
       dispatch(actionGetUser(JSON.parse(localStorage.getItem('user')).id));
+      dispatch(actionGetAllBooks(JSON.parse(localStorage.getItem('user')).id));
     }
     dispatch(actionGetAllTypeFoods());
-    dispatch(actionGetAllFoods());
+    dispatch(actionGetFoodsByName(''));
     return function () {
       return null;
     };

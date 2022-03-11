@@ -89,45 +89,56 @@ function RegisterInput() {
           setError('Tên đăng nhập đã tồn tại');
         })
         .catch((err) => {
-          axios.get(`${api}vaiTro/detail/tenVaiTro/CUSTOMER`).then((res) => {
-            axios
-              .post(`${api}taiKhoan/create`, {
-                tenDangNhap: username,
-                matKhau: password,
-                trangThai: 'active',
-                vaiTro: {
-                  id: res.data.id
-                }
-              })
-              .then((resTaiKhoan) => {
+          axios
+            .get(`${api}khachHang/detail/soDienThoai`, {
+              params: {
+                soDienThoai: phone
+              }
+            })
+            .then((res) => {
+              setError('Số điện thoại đã tồn tại');
+            })
+            .catch((err) => {
+              axios.get(`${api}vaiTro/detail/tenVaiTro/CUSTOMER`).then((res) => {
                 axios
-                  .post(`${api}khachHang/create`, {
-                    anhDaiDien:
-                      'https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg',
-                    hoTen: fullname,
-                    soDienThoai: phone,
-                    gioiTinh: 'Nam',
-                    taiKhoan: {
-                      id: resTaiKhoan.data.id
+                  .post(`${api}taiKhoan/create`, {
+                    tenDangNhap: username,
+                    matKhau: password,
+                    trangThai: 'active',
+                    vaiTro: {
+                      id: res.data.id
                     }
                   })
-                  .then((res) => {
-                    navigate('/login');
-                    dispatch(
-                      actionAuthRegister({
-                        content: 'Đăng ký tài khoản thành công',
-                        type: 'success'
+                  .then((resTaiKhoan) => {
+                    axios
+                      .post(`${api}khachHang/create`, {
+                        anhDaiDien:
+                          'https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg',
+                        hoTen: fullname,
+                        soDienThoai: phone,
+                        gioiTinh: 'Nam',
+                        taiKhoan: {
+                          id: resTaiKhoan.data.id
+                        }
                       })
-                    );
+                      .then((res) => {
+                        navigate('/login');
+                        dispatch(
+                          actionAuthRegister({
+                            content: 'Đăng ký tài khoản thành công',
+                            type: 'success'
+                          })
+                        );
+                      })
+                      .catch((err) => {
+                        console.log('err', err);
+                      });
                   })
                   .catch((err) => {
                     console.log('err', err);
                   });
-              })
-              .catch((err) => {
-                console.log('err', err);
               });
-          });
+            });
         });
     }
   };

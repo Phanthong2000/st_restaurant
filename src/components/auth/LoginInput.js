@@ -80,7 +80,11 @@ function LoginInput() {
       axios
         .get(`${api}taiKhoan/detail/tenDangNhap/${username}`)
         .then((res) => {
-          if (res.data.vaiTro.tenVaiTro === 'CUSTOMER' && res.data.matKhau === password) {
+          if (
+            res.data.vaiTro.tenVaiTro === 'CUSTOMER' &&
+            res.data.matKhau === password &&
+            res.data.trangThai === 'Hiệu lực'
+          ) {
             axios
               .get(`${api}khachHang/detail/tenDangNhap/${username}`)
               .then((resKH) => {
@@ -88,6 +92,8 @@ function LoginInput() {
                 window.location.reload();
               })
               .catch((err) => console.log(err));
+          } else if (res.data.trangThai === 'Đã khoá') {
+            setError('Tài khoản đã bị khoá');
           } else {
             setError('Tài khoản không tồn tại');
           }
@@ -135,7 +141,14 @@ function LoginInput() {
       <BoxLogin>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <ButtonOptions onClick={goToRegister}>Đăng ký</ButtonOptions>
-          <ButtonOptions sx={{ marginLeft: '15px' }}>Quên mật khẩu?</ButtonOptions>
+          <ButtonOptions
+            onClick={() => {
+              navigate('/forgot-password');
+            }}
+            sx={{ marginLeft: '15px' }}
+          >
+            Quên mật khẩu?
+          </ButtonOptions>
         </Box>
         <ButtonLogin onClick={login}>Đăng nhập</ButtonLogin>
       </BoxLogin>

@@ -3,7 +3,9 @@ import {
   ACTION_ORDER_ADD_FOODS,
   ACTION_ORDER_DELETE_FOODS,
   ACTION_ORDER_EDIT_FOODS,
-  ACTION_ORDER_MODAL_INFORMATION_FOOD
+  ACTION_ORDER_MODAL_INFORMATION_FOOD,
+  ACTION_ORDER_SET_FOODS,
+  ACTION_ORDER_GET_ALL_BOOKS
 } from '../actions/types';
 
 const defaultState = {
@@ -20,7 +22,8 @@ const defaultState = {
   modalInformationFood: {
     status: false,
     food: {}
-  }
+  },
+  allBooks: []
 };
 
 // eslint-disable-next-line default-param-last
@@ -55,10 +58,20 @@ const orderReducer = (state = defaultState, action) => {
             .concat(...state.foods.slice(action.payload.index + 1, state.foods.length))
         ]
       };
+    case ACTION_ORDER_SET_FOODS:
+      return {
+        ...state,
+        foods: action.payload
+      };
     case ACTION_ORDER_MODAL_INFORMATION_FOOD:
       return {
         ...state,
         modalInformationFood: action.payload
+      };
+    case ACTION_ORDER_GET_ALL_BOOKS:
+      return {
+        ...state,
+        allBooks: action.payload
       };
     default:
       return state;

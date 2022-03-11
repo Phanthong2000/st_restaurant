@@ -100,6 +100,7 @@ function FoodItemOrder({ food }) {
         quantity: 1
       })
     );
+    window.scrollTo({ left: 0, top: 300, behavior: 'smooth' });
   };
   useEffect(() => {
     checkFoodChosenOrder();

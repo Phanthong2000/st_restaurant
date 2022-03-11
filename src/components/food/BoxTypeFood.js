@@ -26,13 +26,12 @@ BoxTypeFood.prototype = {
 };
 function BoxTypeFood({ type }) {
   const [allFoods, setAllFoods] = useState([]);
-  const foods = useSelector((state) => state.food.foods);
+  const foods = useSelector((state) => state.food.foodsByName);
   const typeChosen = useSelector((state) => state.food.typeChosen);
-  const [name, setName] = useState('');
   const getAllFoodsByType = () => {
     const data = [];
     foods.forEach((food) => {
-      if (food.loaiMonAn.id === type.id) data.push(food);
+      if (food.loaiMonAn.id === type.id && food.trangThai === 'Đang bán') data.push(food);
     });
     setAllFoods(data);
   };
