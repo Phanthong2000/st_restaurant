@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Avatar,
   Box,
@@ -16,12 +16,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import axios from 'axios';
 import moment from 'moment';
+import { getDownloadURL, ref, uploadBytesResumable, uploadString } from 'firebase/storage';
+import { Icon } from '@iconify/react';
 import api from '../../assets/api/api';
 import {
   actionGetUser,
   actionUserShowHotToast,
   actionUserSnackbar
 } from '../../redux/actions/userAction';
+import { storage } from '../../firebase-config';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -93,6 +96,7 @@ const ButtonSaveChangeChange = styled(Button)(({ theme }) => ({
   }
 }));
 function Detail() {
+  const fileRef = useRef();
   const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [fullName, setFullName] = useState('');
@@ -106,9 +110,10 @@ function Detail() {
   const [identification, setIdentification] = useState('');
   const user = useSelector((state) => state.user.user);
   const [error, setError] = useState('');
+  const [image, setImage] = useState({});
+  const [progress, setProgress] = useState(false);
   useEffect(() => {
     if (loggedIn && user.taiKhoan !== undefined) {
-      console.log(user.taiKhoan.tenDangNhap);
       setUsername(user.taiKhoan.tenDangNhap);
       setFullName(user.hoTen);
       setAvatar(user.anhDaiDien);
@@ -123,12 +128,28 @@ function Detail() {
       return null;
     };
   }, [user]);
+  const onChangeFile = (files) => {
+    if (files && files[0]) {
+      if (files[0].size < 2097152) {
+        setAvatar(URL.createObjectURL(files[0]));
+        setImage(files[0]);
+      } else {
+        dispatch(
+          actionUserSnackbar({
+            status: true,
+            content: 'Ảnh đại diện phải nhỏ hơn 2MB',
+            type: 'error'
+          })
+        );
+      }
+    }
+  };
   const save = () => {
     if (fullName === '') {
       setError('Vui lòng nhập họ tên');
     } else if (!phone.match('^0[0-9]{8,10}$')) {
       setError('Vui lòng nhập số điện thoại');
-    } else {
+    } else if (avatar === user.anhDaiDien) {
       axios
         .get(`${api}khachHang/detail/${user.id}`)
         .then((res) => {
@@ -158,6 +179,57 @@ function Detail() {
         .catch((err) => {
           console.log(err);
         });
+    } else {
+      setProgress(true);
+      const storageRef = ref(storage, `avatar/${user.id}.${new Date().getTime()}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+        },
+        () => {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            axios
+              .get(`${api}khachHang/detail/${user.id}`)
+              .then((res) => {
+                axios
+                  .put(`${api}khachHang/edit`, {
+                    ...res.data,
+                    anhDaiDien: downloadURL,
+                    hoTen: fullName,
+                    soDienThoai: phone,
+                    email,
+                    diaChi: address,
+                    chungMinhThu: identification,
+                    ngaySinh: moment(birthday).format(),
+                    gioiTinh: gender
+                  })
+                  .then((res) => {
+                    setProgress(false);
+                    dispatch(
+                      actionUserSnackbar({
+                        status: true,
+                        content: 'Cập nhật thông tin thành công',
+                        type: 'success'
+                      })
+                    );
+                    dispatch(actionGetUser(user.id));
+                  })
+                  .catch((err) => console.log(err));
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          });
+        }
+      );
     }
   };
   if (user.taiKhoan === undefined) return null;
@@ -167,8 +239,19 @@ function Detail() {
         <BoxTitle>
           <Title>Thông tin khách hàng</Title>
           <Box sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
-            <AvatarUser src={avatar} />
-            <ButtonChangeAvatar>Đổi ảnh đại diện</ButtonChangeAvatar>
+            {progress ? (
+              <Icon
+                style={{ width: '50px', height: '50px', color: 'gray', marginTop: '50px' }}
+                icon="eos-icons:loading"
+              />
+            ) : (
+              <>
+                <AvatarUser src={avatar} />
+                <ButtonChangeAvatar onClick={() => fileRef.current.click()}>
+                  Đổi ảnh đại diện
+                </ButtonChangeAvatar>
+              </>
+            )}
           </Box>
         </BoxTitle>
         <BoxContent>
@@ -247,6 +330,16 @@ function Detail() {
           </BoxInput>
         </BoxContent>
       </BoxDetail>
+      <input
+        onClick={(e) => {
+          e.target.value = null;
+        }}
+        accept=".png, .jpg, .jpeg"
+        onChange={(e) => onChangeFile(e.target.files)}
+        ref={fileRef}
+        style={{ display: 'none' }}
+        type="file"
+      />
     </RootStyle>
   );
 }

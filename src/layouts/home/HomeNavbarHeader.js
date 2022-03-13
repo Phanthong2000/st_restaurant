@@ -46,6 +46,7 @@ function HomeNavbarHeader() {
   const showToast = useSelector((state) => state.user.showToast);
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [user, setUser] = useState({});
+  const userLogin = useSelector((state) => state.user.user);
   const notify = (type, content) => {
     if (type === 'error') {
       return toast.error(<ToastDisplay content={content} />);
@@ -54,13 +55,14 @@ function HomeNavbarHeader() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (loggedIn) {
-      setUser(JSON.parse(localStorage.getItem('user')));
+      // setUser(JSON.parse(localStorage.getItem('user')));
+      setUser(userLogin);
     }
     Aos.init({ duration: 1000 });
     return function () {
       return null;
     };
-  }, []);
+  }, [userLogin]);
   useEffect(() => {
     if (showToast.content !== '') notify(showToast.type, showToast.content);
     return function () {
@@ -81,7 +83,6 @@ function HomeNavbarHeader() {
   if (user.id === undefined && loggedIn) return null;
   return (
     <RootStyle>
-      <UtilRedux />
       <BoxContact>
         <IconContact icon="simple-line-icons:social-facebook" />
         <IconContact icon="uit:youtube" />
@@ -99,10 +100,7 @@ function HomeNavbarHeader() {
               marginRight: '20px'
             }}
           >
-            <Avatar
-              sx={{ width: '30px', height: '30px' }}
-              src="https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg"
-            />
+            <Avatar sx={{ width: '30px', height: '30px' }} src={user.anhDaiDien} />
             <Typography sx={{ fontWeight: 'bold', marginLeft: '10px' }}>
               {user.hoTen.substring(user.hoTen.lastIndexOf(' '), user.hoTen.length)}
             </Typography>

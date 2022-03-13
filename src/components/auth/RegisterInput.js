@@ -104,7 +104,7 @@ function RegisterInput() {
                   .post(`${api}taiKhoan/create`, {
                     tenDangNhap: username,
                     matKhau: password,
-                    trangThai: 'active',
+                    trangThai: 'Hiệu lực',
                     vaiTro: {
                       id: res.data.id
                     }
