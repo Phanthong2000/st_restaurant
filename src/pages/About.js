@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import MenuAbout from '../components/about/MenuAbout';
 import menu from '../assets/data/menu';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
+import Map from '../components/map/Map';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -100,7 +101,7 @@ function BoxMenu() {
         </Box>
         <Grid sx={{ marginTop: '20px' }} container>
           {typefoods.map((item, index) => (
-            <MenuAbout key={index} menu={item} />
+            <MenuAbout key={index} index={index} menu={item} />
           ))}
         </Grid>
       </BoxRight>

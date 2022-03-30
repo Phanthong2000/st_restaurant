@@ -27,7 +27,7 @@ const RootStyle = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(0, 3),
   top: 40,
-  zIndex: 100
+  zIndex: 999
 }));
 const Logo = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',

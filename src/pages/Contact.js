@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { Box, Button, InputBase, styled, Typography } from '@mui/material';
 import React from 'react';
+import Map from '../components/map/Map';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -26,7 +27,7 @@ const Title = styled(Typography)(({ theme }) => ({
 }));
 const BoxFeedbackAndContact = styled(Box)(({ theme }) => ({
   width: '100%',
-  padding: theme.spacing(2, 10),
+  padding: theme.spacing(10, 10),
   background: theme.palette.background,
   display: 'flex',
   justifyContent: 'space-between',
@@ -119,6 +120,7 @@ function Contact() {
       <BoxTitle>
         <Title>LIÊN HỆ</Title>
       </BoxTitle>
+      <Map />
       <BoxFeedbackAndContact>
         <BoxContact>
           <AvatarContact src="https://cdn.broadsheet.com.au/cache/ee/59/ee5913ff25171675a6e1dc213933c36a.jpg" />

@@ -15,6 +15,7 @@ import Detail from './components/profile/Detail';
 import HistoryOrder from './components/profile/HistoryOrder';
 import ForgetPassword from './pages/ForgetPassword';
 import Error from './pages/Error';
+import Demo from './pages/Demo';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default function Router() {
       ]
     },
     { path: '/error', element: <Error /> },
-    { path: '*', element: <Navigate to="/error" /> }
+    { path: '*', element: <Navigate to="/error" /> },
+    { path: '/demo', element: <Demo /> }
   ]);
 }

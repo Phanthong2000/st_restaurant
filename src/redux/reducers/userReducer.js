@@ -2,7 +2,8 @@ import {
   ACTION_USER_OPEN_CHAT_BOX,
   ACTION_USER_SHOW_HOT_TOAST,
   ACTION_USER_GET_USER,
-  ACTION_USER_SNACKBAR
+  ACTION_USER_SNACKBAR,
+  ACTION_USER_BACKDROP
 } from '../actions/types';
 
 const defaultState = {
@@ -16,6 +17,10 @@ const defaultState = {
     status: false,
     content: '',
     type: 'success'
+  },
+  backdrop: {
+    status: false,
+    content: ''
   }
 };
 
@@ -41,6 +46,11 @@ const userReducer = (state = defaultState, action) => {
       return {
         ...state,
         snackbar: action.payload
+      };
+    case ACTION_USER_BACKDROP:
+      return {
+        ...state,
+        backdrop: action.payload
       };
     default:
       return state;

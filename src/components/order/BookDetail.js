@@ -117,6 +117,12 @@ function BookDetail({ book }) {
         <ContentDetail>{checkStatus()}</ContentDetail>
       </BoxDetail>
       <BoxDetail>
+        <LabelDetail>Thời gian đặt bàn: </LabelDetail>
+        <ContentDetail>
+          {moment(Date.parse(book.createAt)).format(`hh:mm a DD/MM/yyyy`)}
+        </ContentDetail>
+      </BoxDetail>
+      <BoxDetail>
         <LabelDetail>Số lượng món ăn: {book.listChiTietDonDatBan.length} món</LabelDetail>
         <LabelDetail>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnđ</LabelDetail>
       </BoxDetail>

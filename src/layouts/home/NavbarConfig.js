@@ -4,7 +4,7 @@ const navbarConfig = [
     path: '/home/app'
   },
   {
-    title: 'Đặt bàn',
+    title: 'Đơn đặt bàn',
     path: '/home/order'
   },
   {

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import typefood from '../../assets/data/typefood';
 import { actionFoodGetTypeChosen } from '../../redux/actions/foodAction';
+import imageMenuTypeFood from '../../assets/data/imageMenuTypoFood';
 
 const RootStyle = styled(Grid)(({ theme }) => ({
   width: '100%',
@@ -34,8 +35,8 @@ const ButtonWatch = styled(Button)(({ theme }) => ({
     background: theme.palette.mainHover
   }
 }));
-MenuAbout.prototype = { menu: PropTypes.object };
-function MenuAbout({ menu }) {
+MenuAbout.prototype = { menu: PropTypes.object, index: PropTypes.number };
+function MenuAbout({ menu, index }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const chooseTypeFood = () => {
@@ -50,7 +51,7 @@ function MenuAbout({ menu }) {
   return (
     <RootStyle xs={6} sm={6} md={6} lg={3} xl={3}>
       <BoxMenu sx={{ '&:hover': { boxShadow: 10 } }}>
-        <ImageMenu src={menu.image} />
+        <ImageMenu src={imageMenuTypeFood.at(index).image} />
         <Typography sx={{ fontWeight: 'bold', fontSize: '17px', marginTop: '5px' }}>
           {menu.tenLoaiMonAn}
         </Typography>

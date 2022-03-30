@@ -165,7 +165,7 @@ function Order() {
             </InputWapper>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
-                <Typography sx={{ fontSize: '16px' }}>Ngày tháng, giờ:</Typography>
+                <Typography sx={{ fontSize: '16px' }}>Thời gian nhận bàn</Typography>
                 <DatePicker
                   customInput={<InputInfo fullWidth />}
                   selected={dateUse}

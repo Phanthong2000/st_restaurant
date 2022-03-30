@@ -82,6 +82,12 @@ function Food() {
     console.log();
     return function () {
       dispatch(actionGetFoodsByName(''));
+      dispatch(
+        actionFoodGetTypeChosen({
+          id: '',
+          name: 'all'
+        })
+      );
     };
   }, []);
   const chooseTypeAll = () => {

@@ -59,6 +59,9 @@ function Book({ book, click }) {
         <CheckIn>Thời gian dự kiến sử dụng: {book.thoiGianDuKienSuDung}p</CheckIn>
         <CheckIn>Số lượng khách: {book.soLuongKhach} người</CheckIn>
         <CheckIn>Tình trạng: {checkStatus()}</CheckIn>
+        <CheckIn>
+          Thời gian đặt bàn: {moment(Date.parse(book.createAt)).format(`hh:mm a DD/MM/yyyy`)}
+        </CheckIn>
         <CheckIn>Số lượng món ăn: {book.listChiTietDonDatBan.length} món</CheckIn>
         <CheckIn>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnđ</CheckIn>
       </Box>

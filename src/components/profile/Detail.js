@@ -21,6 +21,7 @@ import { Icon } from '@iconify/react';
 import api from '../../assets/api/api';
 import {
   actionGetUser,
+  actionUserBackdrop,
   actionUserShowHotToast,
   actionUserSnackbar
 } from '../../redux/actions/userAction';
@@ -69,7 +70,7 @@ const Input = styled(TextField)(({ theme }) => ({
 }));
 const AvatarUser = styled(Avatar)(({ theme }) => ({
   width: '100%',
-  height: '100%',
+  height: '200px',
   [theme.breakpoints.down('md')]: {
     width: '40%',
     height: '40%',
@@ -111,7 +112,6 @@ function Detail() {
   const user = useSelector((state) => state.user.user);
   const [error, setError] = useState('');
   const [image, setImage] = useState({});
-  const [progress, setProgress] = useState(false);
   useEffect(() => {
     if (loggedIn && user.taiKhoan !== undefined) {
       setUsername(user.taiKhoan.tenDangNhap);
@@ -150,6 +150,12 @@ function Detail() {
     } else if (!phone.match('^0[0-9]{8,10}$')) {
       setError('Vui lòng nhập số điện thoại');
     } else if (avatar === user.anhDaiDien) {
+      dispatch(
+        actionUserBackdrop({
+          status: true,
+          content: 'Cập nhật thông tin'
+        })
+      );
       axios
         .get(`${api}khachHang/detail/${user.id}`)
         .then((res) => {
@@ -166,6 +172,12 @@ function Detail() {
             })
             .then((res) => {
               dispatch(
+                actionUserBackdrop({
+                  status: false,
+                  content: 'Cập nhật thông tin'
+                })
+              );
+              dispatch(
                 actionUserSnackbar({
                   status: true,
                   content: 'Cập nhật thông tin thành công',
@@ -180,7 +192,12 @@ function Detail() {
           console.log(err);
         });
     } else {
-      setProgress(true);
+      dispatch(
+        actionUserBackdrop({
+          status: true,
+          content: 'Cập nhật thông tin'
+        })
+      );
       const storageRef = ref(storage, `avatar/${user.id}.${new Date().getTime()}`);
       const uploadTask = uploadBytesResumable(storageRef, image);
       uploadTask.on(
@@ -212,7 +229,12 @@ function Detail() {
                     gioiTinh: gender
                   })
                   .then((res) => {
-                    setProgress(false);
+                    dispatch(
+                      actionUserBackdrop({
+                        status: false,
+                        content: 'Cập nhật thông tin'
+                      })
+                    );
                     dispatch(
                       actionUserSnackbar({
                         status: true,
@@ -239,19 +261,12 @@ function Detail() {
         <BoxTitle>
           <Title>Thông tin khách hàng</Title>
           <Box sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
-            {progress ? (
-              <Icon
-                style={{ width: '50px', height: '50px', color: 'gray', marginTop: '50px' }}
-                icon="eos-icons:loading"
-              />
-            ) : (
-              <>
-                <AvatarUser src={avatar} />
-                <ButtonChangeAvatar onClick={() => fileRef.current.click()}>
-                  Đổi ảnh đại diện
-                </ButtonChangeAvatar>
-              </>
-            )}
+            <>
+              <AvatarUser src={avatar} />
+              <ButtonChangeAvatar onClick={() => fileRef.current.click()}>
+                Đổi ảnh đại diện
+              </ButtonChangeAvatar>
+            </>
           </Box>
         </BoxTitle>
         <BoxContent>

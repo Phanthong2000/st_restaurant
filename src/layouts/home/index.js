@@ -11,6 +11,7 @@ import ChatBox from '../../components/home/ChatBox';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 import ButtonIconChatBox from '../../components/home/ButtonIconChatBox';
 import Snack from '../../components/Snack';
+import BackdropUser from '../../components/Backdrop';
 
 const heightScreen = window.innerHeight - 1;
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -32,6 +33,7 @@ function HomeLayout() {
       <MainStyle>
         {!openChatBox ? <ButtonIconChatBox /> : <ChatBox />}
         <Outlet />
+        <BackdropUser />
         <Snack />
       </MainStyle>
       <HomeBottom />

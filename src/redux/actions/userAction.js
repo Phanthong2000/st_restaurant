@@ -4,7 +4,8 @@ import {
   ACTION_USER_OPEN_CHAT_BOX,
   ACTION_USER_SHOW_HOT_TOAST,
   ACTION_USER_GET_USER,
-  ACTION_USER_SNACKBAR
+  ACTION_USER_SNACKBAR,
+  ACTION_USER_BACKDROP
 } from './types';
 
 export const actionUserGetUser = (data) => ({
@@ -23,7 +24,10 @@ export const actionUserSnackbar = (data) => ({
   type: ACTION_USER_SNACKBAR,
   payload: data
 });
-
+export const actionUserBackdrop = (data) => ({
+  type: ACTION_USER_BACKDROP,
+  payload: data
+});
 export const actionGetUser = (id) => (dispatch) => {
   axios
     .get(`${api}khachHang/detail/${id}`)
