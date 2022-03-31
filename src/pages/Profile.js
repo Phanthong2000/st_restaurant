@@ -10,29 +10,33 @@ import MenuItemProfile from '../components/profile/MenuItemProfile';
 const heightScreen = window.innerHeight - 1;
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
-  background: theme.palette.white,
+  background: theme.palette.lightgrey,
   marginTop: '120px',
-  display: 'flex'
+  display: 'flex',
+  padding: theme.spacing(2)
 }));
 const BoxAvatar = styled(Card)(({ theme }) => ({
   width: '100%',
-  padding: theme.spacing(2)
+  padding: theme.spacing(2),
+  background: theme.palette.white,
+  display: 'flex',
+  alignItems: 'center'
 }));
-const ProfileSidebar = styled(Box)(({ theme }) => ({
+const ProfileSidebar = styled(Card)(({ theme }) => ({
   width: '300px',
-  background: theme.palette.background,
-  height: '100%'
+  background: theme.palette.white,
+  height: '100%',
+  padding: '10px'
 }));
 const SpaceTop = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100px'
 }));
-const MenuBox = styled(Stack)(({ theme }) => ({
-  background: theme.palette.lightgrey
-}));
+const MenuBox = styled(Stack)(({ theme }) => ({ marginTop: '20px' }));
 const BoxContent = styled(Box)(({ theme }) => ({
   background: theme.palette.lightgrey,
-  width: '100%'
+  width: '100%',
+  padding: '0px 10px'
 }));
 const Username = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
@@ -53,16 +57,14 @@ function Profile() {
     <RootStyle>
       <ProfileSidebar>
         <BoxAvatar>
-          <Card sx={{ padding: '5px', display: 'flex', alignItems: 'center', background: '#fff' }}>
-            <Avatar sx={{ width: '50px', height: '50px' }} src={user.anhDaiDien} />
-            <Box sx={{ marginLeft: '5px' }}>
-              <Username>{user.hoTen}</Username>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Icon style={{ color: 'gray' }} icon="ci:phone" />
-                <Phone>{user.soDienThoai}</Phone>
-              </Box>
+          <Avatar sx={{ width: '50px', height: '50px' }} src={user.anhDaiDien} />
+          <Box sx={{ marginLeft: '5px' }}>
+            <Username>{user.hoTen}</Username>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Icon style={{ color: 'gray' }} icon="ci:phone" />
+              <Phone>{user.soDienThoai}</Phone>
             </Box>
-          </Card>
+          </Box>
         </BoxAvatar>
         <MenuBox>
           {profileSidebarConfig.map((item, index) => (

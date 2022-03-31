@@ -3,6 +3,7 @@ import Router from './routes';
 import ThemeConfig from './theme';
 import GlobalStyles from './theme/globalStyles';
 import UtilRedux from './util/UtilRedux';
+import 'antd/dist/antd.css';
 
 export default function App() {
   return (

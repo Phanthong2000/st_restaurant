@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, styled, Typography } from '@mui/material';
+import { Avatar, Box, styled, Tooltip, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -84,27 +84,35 @@ function HomeNavbarHeader() {
   return (
     <RootStyle>
       <BoxContact>
-        <IconContact icon="simple-line-icons:social-facebook" />
-        <IconContact icon="uit:youtube" />
-        <IconContact icon="ph:instagram-logo" />
+        <Tooltip title="Facebook">
+          <IconContact icon="simple-line-icons:social-facebook" />
+        </Tooltip>
+        <Tooltip title="Youtube">
+          <IconContact icon="uit:youtube" />
+        </Tooltip>
+        <Tooltip title="Instagram">
+          <IconContact icon="ph:instagram-logo" />
+        </Tooltip>
       </BoxContact>
       {loggedIn ? (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box
-            onClick={goToProfile}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              marginRight: '20px'
-            }}
-          >
-            <Avatar sx={{ width: '30px', height: '30px' }} src={user.anhDaiDien} />
-            <Typography sx={{ fontWeight: 'bold', marginLeft: '10px' }}>
-              {user.hoTen.substring(user.hoTen.lastIndexOf(' '), user.hoTen.length)}
-            </Typography>
-          </Box>
+          <Tooltip title="Xem thông tin cá nhân">
+            <Box
+              onClick={goToProfile}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                marginRight: '20px'
+              }}
+            >
+              <Avatar sx={{ width: '30px', height: '30px' }} src={user.anhDaiDien} />
+              <Typography sx={{ fontWeight: 'bold', marginLeft: '10px' }}>
+                {user.hoTen.substring(user.hoTen.lastIndexOf(' '), user.hoTen.length)}
+              </Typography>
+            </Box>
+          </Tooltip>
           <Box
             onClick={logout}
             sx={{

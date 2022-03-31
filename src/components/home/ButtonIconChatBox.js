@@ -16,8 +16,8 @@ import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 const ButtonIconChat = styled(Box)(({ theme }) => ({
   position: 'fixed',
   zIndex: 999,
-  bottom: 30,
-  right: 30,
+  bottom: 50,
+  right: 50,
   textAlign: 'center',
   display: 'flex',
   alignItems: 'center',
@@ -35,7 +35,7 @@ function ButtonIconChatBox() {
     dispatch(actionUserOpenChatBox(true));
   };
   return (
-    <ButtonIconChat data-aos="fade-up" sx={{ width: '100px', height: '100px' }}>
+    <ButtonIconChat>
       <Box
         onClick={chooseChatBox}
         sx={{

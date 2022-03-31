@@ -2,6 +2,7 @@ import React from 'react';
 import { Scrollbar } from 'smooth-scrollbar-react';
 import { Outlet } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { BackTop } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, IconButton, styled } from '@mui/material';
 import HomeNavbar from './HomeNavbar';
@@ -35,6 +36,39 @@ function HomeLayout() {
         <Outlet />
         <BackdropUser />
         <Snack />
+        <BackTop
+          style={{
+            height: '50px',
+            width: '50px',
+            lineHeight: '40px',
+            borderRadius: '50px',
+            color: '#fff',
+            textAlign: 'center',
+            fontSize: 14,
+            bottom: 110,
+            right: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Box
+            sx={{
+              height: '50px',
+              width: '50px',
+              borderRadius: '50px',
+              background: 'grey',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Icon
+              style={{ color: '#fff', width: '30px', height: '30px' }}
+              icon="ant-design:vertical-align-top-outlined"
+            />
+          </Box>
+        </BackTop>
       </MainStyle>
       <HomeBottom />
     </RootStyle>

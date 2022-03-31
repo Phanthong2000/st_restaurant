@@ -8,8 +8,8 @@ const RootStyle = styled(Card)(({ theme }) => ({
   width: '300px',
   height: '400px',
   position: 'fixed',
-  bottom: 30,
-  right: 30,
+  bottom: 5,
+  right: 150,
   zIndex: 999,
   background: theme.palette.white
 }));

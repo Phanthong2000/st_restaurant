@@ -6,35 +6,21 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
   textAlign: 'center',
-  background: theme.palette.background,
-  cursor: 'pointer'
-}));
-const Space1 = styled('div')(({ theme }) => ({
-  height: '30px',
-  background: theme.palette.background,
-  borderBottomRightRadius: '30px',
-  width: '100%'
-}));
-const Space2 = styled('div')(({ theme }) => ({
-  height: '30px',
-  background: theme.palette.background,
-  borderTopRightRadius: '30px',
-  width: '100%'
+  cursor: 'pointer',
+  marginTop: '20px'
 }));
 const WrapperName = styled(Box)(({ theme }) => ({
-  background: theme.palette.background,
-  width: '90%',
-  marginLeft: '10%',
-  height: '80px',
+  width: '100%',
   display: 'flex',
   alignItems: 'center',
-  borderTopLeftRadius: '70px',
-  borderBottomLeftRadius: '70px',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  borderRadius: '10px',
+  padding: '10px 0px'
 }));
 const Name = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
-  fontSize: '20px'
+  fontSize: '18px',
+  fontFamily: theme.typography.fontFamily.primary
 }));
 MenuItemProfile.prototype = {
   menu: PropTypes.object
@@ -46,21 +32,11 @@ function MenuItemProfile({ menu }) {
     navigate(`${menu.path}`);
   };
   return (
-    <>
-      {pathname.includes(menu.path) && <Space1 />}
-      <RootStyle onClick={goToPath}>
-        <WrapperName sx={{ background: pathname.includes(menu.path) && '#D9DDE9' }}>
-          <Name
-            sx={{
-              color: pathname.includes(menu.path) ? '#000' : '#fff'
-            }}
-          >
-            {menu.name}
-          </Name>
-        </WrapperName>
-      </RootStyle>
-      {pathname.includes(menu.path) && <Space2 />}
-    </>
+    <RootStyle onClick={goToPath}>
+      <WrapperName sx={{ background: pathname.includes(menu.path) && '#D9DDE9' }}>
+        <Name>{menu.name}</Name>
+      </WrapperName>
+    </RootStyle>
   );
 }
 

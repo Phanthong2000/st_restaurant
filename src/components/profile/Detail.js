@@ -28,8 +28,7 @@ import {
 import { storage } from '../../firebase-config';
 
 const RootStyle = styled(Box)(({ theme }) => ({
-  width: '100%',
-  padding: theme.spacing(2)
+  width: '100%'
 }));
 const BoxDetail = styled(Card)(({ theme }) => ({
   width: '100%',

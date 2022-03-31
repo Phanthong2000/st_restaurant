@@ -11,7 +11,8 @@ import {
   TableCell,
   TableBody,
   TableHead,
-  TableRow
+  TableRow,
+  Button
 } from '@mui/material';
 
 const RootStyle = styled(Card)(({ theme }) => ({
@@ -40,8 +41,21 @@ const LabelDetail = styled(Typography)(({ theme }) => ({
 const ContentDetail = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold'
 }));
+const ButtonBack = styled(Button)(({ theme }) => ({
+  color: theme.palette.white,
+  background: theme.palette.main,
+  fontWeight: 'bold',
+  fontFamily: theme.typography.fontFamily.primary,
+  fontSize: '14px',
+  textTransform: 'none',
+  marginTop: '20px',
+  ':hover': {
+    background: theme.palette.mainHover
+  }
+}));
 BookDetail.prototype = {
-  book: PropTypes.object
+  book: PropTypes.object,
+  back: PropTypes.func
 };
 function RowFood({ food, index }) {
   const Cell = styled(TableCell)(({ theme }) => ({
@@ -63,10 +77,24 @@ function RowFood({ food, index }) {
     </TableRow>
   );
 }
-function BookDetail({ book }) {
+function BookDetail({ book, back }) {
   const checkStatus = () => {
-    if (book.trangThai === `0`) return `Chưa sử dụng`;
-    if (book.trangThai === `1`) return `Đã sử dung`;
+    if (
+      book.trangThai === `0` &&
+      new Date().getTime() -
+        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) <=
+        0
+    )
+      return `Chưa sử dụng`;
+    if (book.trangThai === '1') return 'Đã sử dụng';
+    if (
+      new Date().getTime() -
+        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) >
+        0 &&
+      book.trangThai === `0`
+    )
+      return `Đã quá hạn`;
+    if (book.trangThai === '2') return 'Đang sử dụng';
   };
   const getTotal = () => {
     let total = 0;
@@ -152,6 +180,7 @@ function BookDetail({ book }) {
           </Table>
         </TableContainer>
       </Card>
+      <ButtonBack onClick={back}>Quay lại</ButtonBack>
     </RootStyle>
   );
 }

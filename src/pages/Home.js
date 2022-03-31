@@ -4,9 +4,11 @@ import { Scrollbar } from 'smooth-scrollbar-react';
 import { Carousel } from 'react-responsive-carousel';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { BackTop } from 'antd';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import sloganHome from '../assets/data/sloganHome';
 import SloganHome from '../components/home/SloganHome';
+import BoxTypoFoods from '../components/home/BoxTypoFoods';
 
 const heightScreen = window.innerHeight - 1;
 const widthScreen = window.innerWidth - 17;
@@ -105,6 +107,7 @@ function Home() {
           <SloganHome slogan={item} key={index} index={index} />
         ))}
       </BoxSlogan>
+      <BoxTypoFoods />
     </RootStyle>
   );
 }
