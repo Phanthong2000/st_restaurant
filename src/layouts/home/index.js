@@ -38,15 +38,15 @@ function HomeLayout() {
         <Snack />
         <BackTop
           style={{
-            height: '50px',
-            width: '50px',
+            height: '44px',
+            width: '44x',
             lineHeight: '40px',
-            borderRadius: '50px',
+            borderRadius: '44px',
             color: '#fff',
             textAlign: 'center',
             fontSize: 14,
             bottom: 110,
-            right: 50,
+            right: 24,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -54,9 +54,9 @@ function HomeLayout() {
         >
           <Box
             sx={{
-              height: '50px',
-              width: '50px',
-              borderRadius: '50px',
+              height: '44px',
+              width: '44px',
+              borderRadius: '44px',
               background: 'grey',
               display: 'flex',
               alignItems: 'center',
