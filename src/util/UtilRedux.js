@@ -7,6 +7,7 @@ import {
   actionGetFoodsByName
 } from '../redux/actions/foodAction';
 import { actionGetAllBooks } from '../redux/actions/orderAction';
+import { actionGetAllAreas } from '../redux/actions/areaAction';
 
 function UtilRedux() {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ function UtilRedux() {
     }
     dispatch(actionGetAllTypeFoods());
     dispatch(actionGetFoodsByName(''));
+    dispatch(actionGetAllAreas());
     return function () {
       return null;
     };

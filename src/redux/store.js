@@ -1,5 +1,6 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
+import areaReducer from './reducers/areaReducer';
 import authReducer from './reducers/authReducer';
 import foodReducer from './reducers/foodReducer';
 import orderReducer from './reducers/orderReducer';
@@ -9,7 +10,8 @@ const rootReducer = combineReducers({
   user: userReducer,
   food: foodReducer,
   order: orderReducer,
-  auth: authReducer
+  auth: authReducer,
+  area: areaReducer
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 export default store;

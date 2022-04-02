@@ -51,7 +51,7 @@ function MenuAbout({ menu, index }) {
   return (
     <RootStyle xs={6} sm={6} md={6} lg={3} xl={3}>
       <BoxMenu sx={{ '&:hover': { boxShadow: 10 } }}>
-        <ImageMenu src={imageMenuTypeFood.at(index).image} />
+        <ImageMenu src={menu.hinhAnh} />
         <Typography sx={{ fontWeight: 'bold', fontSize: '17px', marginTop: '5px' }}>
           {menu.tenLoaiMonAn}
         </Typography>

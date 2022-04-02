@@ -47,7 +47,11 @@ export const actionGetAllBooks = (id) => (dispatch) => {
     })
     .then((res) => {
       // res.data.sort((a,b) => Date.parse(b.created) - Date)
-      dispatch(actionOrderGetAllBooks(res.data));
+      dispatch(
+        actionOrderGetAllBooks(
+          res.data.sort((a, b) => Date.parse(b.createAt) - Date.parse(a.createAt))
+        )
+      );
     })
     .catch((err) => console.log(err));
 };

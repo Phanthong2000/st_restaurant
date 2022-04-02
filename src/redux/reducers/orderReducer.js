@@ -16,6 +16,7 @@ const defaultState = {
     date: 0,
     quantityCustomer: 0,
     timeUse: 0,
+    area: {},
     description: ''
   },
   foods: [],

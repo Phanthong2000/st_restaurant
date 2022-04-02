@@ -29,7 +29,7 @@ import TypeFoodItem from '../components/food/TypeFoodItem';
 import { actionFoodGetTypeChosen, actionGetFoodsByName } from '../redux/actions/foodAction';
 import BoxTypeFoodOrder from '../components/order/BoxTypeFoodOrder';
 import TableRowFoodChosen from '../components/order/TableRowFoodChosen';
-import { actionUserShowHotToast, actionUserSnackbar } from '../redux/actions/userAction';
+import { actionUserBackdrop, actionUserSnackbar } from '../redux/actions/userAction';
 import ModalInformationFood from '../components/order/ModalInformationFood';
 import { actionOrderGetOrder, actionOrderSetFoods } from '../redux/actions/orderAction';
 import api from '../assets/api/api';
@@ -166,6 +166,7 @@ function OrderChooseFood() {
           date: 0,
           quantityCustomer: 0,
           timeUse: 0,
+          area: {},
           description: ''
         })
       );
@@ -226,19 +227,27 @@ function OrderChooseFood() {
   const payForOrder = () => {
     if (foods.length === 0) {
       dispatch(
-        actionUserShowHotToast({
+        actionUserSnackbar({
+          status: true,
           content: 'Vui lòng chọn món ăn',
           type: 'error'
         })
       );
     } else {
+      dispatch(
+        actionUserBackdrop({
+          status: true,
+          content: 'Đang xử lý đặt bàn'
+        })
+      );
       const listChiTietDonDatBan = [];
       foods.forEach((food) => {
         listChiTietDonDatBan.push({
           monAn: {
             id: food.food.id
           },
-          soLuong: food.quantity
+          soLuong: food.quantity,
+          ghiChu: 'Ban đầu'
         });
       });
       const order = {
@@ -250,6 +259,9 @@ function OrderChooseFood() {
         thoiGianNhanBan: moment(book.date).format(),
         trangThai: '0',
         ghiChu: book.description,
+        khuVuc: {
+          id: book.area.id
+        },
         listChiTietDonDatBan
       };
       axios
@@ -257,28 +269,46 @@ function OrderChooseFood() {
           ...order
         })
         .then((res) => {
-          console.log(res.data.createAt);
-          console.log(moment(new Date().getTime()).format());
-          dispatch(
-            actionOrderGetOrder({
-              customerName: '',
-              email: '',
-              phone: '',
-              date: 0,
-              quantityCustomer: 0,
-              timeUse: 0,
-              description: ''
+          axios
+            .post(`${api}thongBao/create`, {
+              donDatBan: {
+                id: res.data.id
+              },
+              khachHang: {
+                id: user.id
+              },
+              loaiThongBao: 'Đặt bàn',
+              trangThai: 'Chưa đọc'
             })
-          );
-          dispatch(actionOrderSetFoods([]));
-          dispatch(
-            actionUserSnackbar({
-              status: true,
-              content: 'Đặt bàn thành công',
-              type: 'success'
-            })
-          );
-          navigate('/home/app');
+            .then((res) => {
+              dispatch(
+                actionOrderGetOrder({
+                  customerName: '',
+                  email: '',
+                  phone: '',
+                  date: 0,
+                  quantityCustomer: 0,
+                  timeUse: 0,
+                  description: '',
+                  area: {}
+                })
+              );
+              dispatch(actionOrderSetFoods([]));
+              dispatch(
+                actionUserBackdrop({
+                  status: false,
+                  content: 'Đang xử lý đặt bàn'
+                })
+              );
+              dispatch(
+                actionUserSnackbar({
+                  status: true,
+                  content: 'Đặt bàn thành công',
+                  type: 'success'
+                })
+              );
+              navigate('/home/app');
+            });
         })
         .catch((err) => console.log(err));
     }
@@ -292,19 +322,19 @@ function OrderChooseFood() {
             Thông tin khách hàng đặt bàn
           </Typography>
         </Grid>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <TitleInformation sx={{ fontSize: '16px' }}>Họ tên:</TitleInformation>
           <InputInfo disabled value={book.customerName} fullWidth placeholder="Aa" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <TitleInformation sx={{ fontSize: '16px' }}>Email:</TitleInformation>
           <InputInfo disabled value={book.email} fullWidth placeholder="Aa" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <TitleInformation sx={{ fontSize: '16px' }}>Số điện thoại:</TitleInformation>
           <InputInfo disabled value={book.phone} fullWidth placeholder="0123456789" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian nhận bàn</Typography>
           <DatePicker
             disabled
@@ -318,7 +348,7 @@ function OrderChooseFood() {
             // }}
           />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian đặt bàn</Typography>
           <DatePicker
             disabled
@@ -332,15 +362,19 @@ function OrderChooseFood() {
             // }}
           />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Số khách:</Typography>
           <InputInfo disabled value={book.quantityCustomer} fullWidth placeholder="0" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
           <InputInfo disabled value={book.timeUse.label} fullWidth placeholder="0" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={3} xl={3}>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+          <Typography sx={{ fontSize: '16px' }}>Khu vực:</Typography>
+          <InputInfo disabled value={book.area.tenKhuVuc} fullWidth placeholder="0" />
+        </InputWapper>
+        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Ghi chú:</Typography>
           <InputInfo disabled value={book.description} fullWidth placeholder="Aa" />
         </InputWapper>

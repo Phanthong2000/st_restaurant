@@ -90,7 +90,7 @@ function TypeFood({ typefood, index }) {
       sx={{ padding: '5%' }}
     >
       <Wrapper>
-        <ImageTypeFood src={imageMenuTypeFood[index].image} />
+        <ImageTypeFood src={typefood.hinhAnh} />
         <Box sx={{ width: '100%', textAlign: 'left', marginTop: '20px' }}>
           <TypeName>{typefood.tenLoaiMonAn}</TypeName>
           <TypeName sx={{ fontSize: '14px' }}>Số lượng món ăn: {`${quantity} món ăn`}</TypeName>

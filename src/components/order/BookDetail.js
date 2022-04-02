@@ -73,6 +73,7 @@ function RowFood({ food, index }) {
       <Cell>{food.monAn.tenMonAn}</Cell>
       <Cell>{food.monAn.donGia.toLocaleString(`es-US`)} vnđ</Cell>
       <Cell>{food.soLuong}</Cell>
+      <Cell>{food.ghiChu}</Cell>
       <Cell>{(food.monAn.donGia * food.soLuong).toLocaleString(`es-US`)} vnđ</Cell>
     </TableRow>
   );
@@ -121,6 +122,10 @@ function BookDetail({ book, back }) {
       width: '15%'
     },
     {
+      name: 'Ghi chú',
+      width: '15%'
+    },
+    {
       name: 'Thành tiền',
       width: '15%'
     }
@@ -141,8 +146,12 @@ function BookDetail({ book, back }) {
         <ContentDetail>{book.soLuongKhach} người</ContentDetail>
       </BoxDetail>
       <BoxDetail>
-        <LabelDetail>Tình trạng: </LabelDetail>
+        <LabelDetail>Trạng thái: </LabelDetail>
         <ContentDetail>{checkStatus()}</ContentDetail>
+      </BoxDetail>
+      <BoxDetail>
+        <LabelDetail>Khu vực: </LabelDetail>
+        <ContentDetail>{book.khuVuc && book.khuVuc.tenKhuVuc}</ContentDetail>
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Thời gian đặt bàn: </LabelDetail>

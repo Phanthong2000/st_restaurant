@@ -1,6 +1,12 @@
 import { Icon } from '@iconify/react';
 import { Box, Button, InputBase, styled, Typography } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
+import validator from 'validator';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { actionUserSnackbar } from '../redux/actions/userAction';
+import api from '../assets/api/api';
 import Map from '../components/map/Map';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 
@@ -114,6 +120,47 @@ function BoxInformation({ icon, title, information }) {
   );
 }
 function Contact() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [fullname, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [subject, setSubject] = useState('');
+  const [content, setContent] = useState('');
+  const [error, setError] = useState('');
+  const sendFeedback = () => {
+    if (!fullname.match(`^.{1,}`)) {
+      setError('Họ và tên không hợp lệ');
+    } else if (!validator.isEmail(email)) {
+      setError('Email không hợp lệ');
+    } else if (!phone.match(`^0[0-9]{8,10}$`)) {
+      setError('Số điện thoại không hợp lệ');
+    } else if (!subject.match(`^.{1,}`)) {
+      setError('Tiêu đề không hợp lệ');
+    } else if (!content.match(`^.{1,}`)) {
+      setError('Nội dung không hợp lệ');
+    } else {
+      setError('');
+      axios
+        .post(`${api}phanHoi/create`, {
+          hoTen: fullname,
+          email,
+          soDienThoai: phone,
+          tieuDe: subject,
+          noiDung: content,
+          trangThai: 'Chưa đọc'
+        })
+        .then((res) => {
+          navigate(`/home/app`);
+          dispatch(
+            actionUserSnackbar({
+              status: true,
+              content: 'Gửi phản hồi thanh công'
+            })
+          );
+        });
+    }
+  };
   return (
     <RootStyle>
       <BoxBreadcrumbs name="Liên hệ" />
@@ -155,31 +202,60 @@ function Contact() {
           <TitleFeedback>Phản hồi</TitleFeedback>
           <BoxInput>
             <Icon style={{ width: '20px', height: '20px' }} icon="fa:user-o" />
-            <InputBase fullWidth sx={{ marginLeft: '10px' }} placeholder="Họ và tên của bạn" />
+            <InputBase
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              fullWidth
+              sx={{ marginLeft: '10px' }}
+              placeholder="Họ và tên của bạn"
+            />
           </BoxInput>
           <BoxInput>
             <Icon style={{ width: '20px', height: '20px' }} icon="carbon:email" />
-            <InputBase fullWidth sx={{ marginLeft: '10px' }} placeholder="Email của bạn" />
+            <InputBase
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+              sx={{ marginLeft: '10px' }}
+              placeholder="Email của bạn"
+            />
           </BoxInput>
           <BoxInput>
             <Icon style={{ width: '20px', height: '20px' }} icon="ant-design:phone-outlined" />
-            <InputBase fullWidth sx={{ marginLeft: '10px' }} placeholder="Số điện thoại của bạn" />
+            <InputBase
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              fullWidth
+              sx={{ marginLeft: '10px' }}
+              placeholder="Số điện thoại của bạn"
+            />
           </BoxInput>
           <BoxInput>
             <Icon style={{ width: '20px', height: '20px' }} icon="uis:subject" />
-            <InputBase fullWidth sx={{ marginLeft: '10px' }} placeholder="Tiêu đề" />
+            <InputBase
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              fullWidth
+              sx={{ marginLeft: '10px' }}
+              placeholder="Tiêu đề"
+            />
           </BoxInput>
           <BoxInput>
             <InputBase
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               multiline
               fullWidth
-              minRows={10}
-              maxRows={10}
+              minRows={7}
+              maxRows={7}
               sx={{ marginLeft: '10px' }}
               placeholder="Nội dung"
             />
           </BoxInput>
-          <ButtonSendFeedback>Gửi phản hồi</ButtonSendFeedback>
+          <Typography sx={{ color: 'red', marginTop: '10px', marginLeft: '10%' }}>
+            {error}
+          </Typography>
+          <ButtonSendFeedback onClick={sendFeedback}>Gửi phản hồi</ButtonSendFeedback>
         </BoxFeedback>
       </BoxFeedbackAndContact>
     </RootStyle>
