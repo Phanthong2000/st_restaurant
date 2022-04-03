@@ -3,12 +3,13 @@ import { Box, Button, InputBase, styled, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import validator from 'validator';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { actionUserSnackbar } from '../redux/actions/userAction';
 import api from '../assets/api/api';
 import Map from '../components/map/Map';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
+import { sendFeedbackSocket } from '../util/wssConnection';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -128,6 +129,7 @@ function Contact() {
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
+  const broadcast = useSelector((state) => state.socket.broadcast);
   const sendFeedback = () => {
     if (!fullname.match(`^.{1,}`)) {
       setError('Họ và tên không hợp lệ');
@@ -141,6 +143,12 @@ function Contact() {
       setError('Nội dung không hợp lệ');
     } else {
       setError('');
+      const allSocketAdmin = [];
+      broadcast.forEach((broad) => {
+        if (broad.type === 'admin') {
+          allSocketAdmin.push(broad.socketId);
+        }
+      });
       axios
         .post(`${api}phanHoi/create`, {
           hoTen: fullname,
@@ -151,6 +159,7 @@ function Contact() {
           trangThai: 'Chưa đọc'
         })
         .then((res) => {
+          sendFeedbackSocket({ socketIds: allSocketAdmin, feedback: res.data });
           navigate(`/home/app`);
           dispatch(
             actionUserSnackbar({

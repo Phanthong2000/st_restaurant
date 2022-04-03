@@ -3,7 +3,10 @@ import { Box, Stack, styled, InputBase, Typography, Button } from '@mui/material
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import api from '../../assets/api/api';
+import { actionAuthLoggedIn } from '../../redux/actions/authAction';
+import { actionGetUser } from '../../redux/actions/userAction';
 
 const RootStyle = styled(Stack)(({ theme }) => ({
   width: '100%',
@@ -63,6 +66,7 @@ function LoginInput() {
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
   const showPassword = () => {
     setIsShowPassword(true);
   };
@@ -89,7 +93,9 @@ function LoginInput() {
               .get(`${api}khachHang/detail/tenDangNhap/${username}`)
               .then((resKH) => {
                 localStorage.setItem('user', JSON.stringify(resKH.data));
-                window.location.reload();
+                dispatch(actionAuthLoggedIn(true));
+                dispatch(actionGetUser(resKH.data.id));
+                navigate('/home/app');
               })
               .catch((err) => console.log(err));
           } else if (res.data.trangThai === 'Đã khoá') {

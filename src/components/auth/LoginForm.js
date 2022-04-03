@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Stack, styled, Typography } from '@mui/material';
 import {} from '@iconify/react';
+import { useSelector } from 'react-redux';
 import LoginInput from './LoginInput';
 import LoginWith from './LoginWith';
+import { userJoin } from '../../util/wssConnection';
 
 const RootStyle = styled(Stack)(({ theme }) => ({
   width: '45%',
@@ -26,6 +28,15 @@ const Restaurant = styled(Typography)(({ theme }) => ({
   fontSize: '20px'
 }));
 function LoginForm() {
+  const me = useSelector((state) => state.socket.me);
+  useEffect(() => {
+    if (me !== '') {
+      userJoin({ socketId: me });
+    }
+    return function () {
+      return null;
+    };
+  }, [me]);
   return (
     <RootStyle direction="column">
       <StackLogo>

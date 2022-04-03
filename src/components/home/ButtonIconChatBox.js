@@ -17,7 +17,7 @@ const ButtonIconChat = styled(Box)(({ theme }) => ({
   position: 'fixed',
   zIndex: 999,
   bottom: 50,
-  right: 50,
+  right: 20,
   textAlign: 'center',
   display: 'flex',
   alignItems: 'center',
@@ -25,8 +25,8 @@ const ButtonIconChat = styled(Box)(({ theme }) => ({
   // animation: `${rotate} 2s infinite alternate`
 }));
 const IconChat = styled(Icon)(({ theme }) => ({
-  width: '40px',
-  height: '40px',
+  width: '30px',
+  height: '30px',
   color: theme.palette.white
 }));
 function ButtonIconChatBox() {
@@ -39,12 +39,12 @@ function ButtonIconChatBox() {
       <Box
         onClick={chooseChatBox}
         sx={{
-          width: '50px',
-          height: '50px',
+          width: '44px',
+          height: '44px',
           background: '#3C58C9',
           display: 'flex',
           alignItems: 'center',
-          borderRadius: '50px',
+          borderRadius: '44px',
           justifyContent: 'center',
           cursor: 'pointer'
         }}

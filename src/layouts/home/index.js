@@ -3,6 +3,7 @@ import { Scrollbar } from 'smooth-scrollbar-react';
 import { Outlet } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { BackTop } from 'antd';
+import 'antd/dist/antd.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, IconButton, styled } from '@mui/material';
 import HomeNavbar from './HomeNavbar';
@@ -39,7 +40,7 @@ function HomeLayout() {
         <BackTop
           style={{
             bottom: 110,
-            right: 24
+            right: 26
           }}
         >
           <Box

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Avatar, Box, styled, Tooltip, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actionUserOpenChatBox } from '../../redux/actions/userAction';
 import { actionAuthLoggedIn } from '../../redux/actions/authAction';
 import UtilRedux from '../../util/UtilRedux';
+import { registerUser, userJoin } from '../../util/wssConnection';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -47,6 +48,9 @@ function HomeNavbarHeader() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [user, setUser] = useState({});
   const userLogin = useSelector((state) => state.user.user);
+  const me = useSelector((state) => state.socket.me);
+  const socket = useSelector((state) => state.socket.socket);
+  const socketRef = useRef();
   const notify = (type, content) => {
     if (type === 'error') {
       return toast.error(<ToastDisplay content={content} />);
@@ -76,16 +80,44 @@ function HomeNavbarHeader() {
     navigate('/home/profile');
   };
   const logout = () => {
+    socketRef.current = socket;
+    socketRef.current.emit('user-logout', { userId: userLogin.id });
     localStorage.removeItem('user');
     dispatch(actionAuthLoggedIn(false));
     navigate('/login');
   };
+  useEffect(() => {
+    if (loggedIn && me !== '') {
+      registerUser({
+        userId: JSON.parse(localStorage.getItem('user')).id,
+        socketId: me,
+        type: 'user'
+      });
+    }
+    return function () {
+      return null;
+    };
+  }, [loggedIn, me]);
+  useEffect(() => {
+    if (me !== '') {
+      userJoin({ socketId: me });
+    }
+    return function () {
+      return null;
+    };
+  }, [me]);
   if (user.id === undefined && loggedIn) return null;
   return (
     <RootStyle>
       <BoxContact>
         <Tooltip title="Facebook">
-          <IconContact icon="simple-line-icons:social-facebook" />
+          <IconContact
+            onClick={() => {
+              socketRef.current = socket;
+              socketRef.current.emit('test', { s: 'dsadsa' });
+            }}
+            icon="simple-line-icons:social-facebook"
+          />
         </Tooltip>
         <Tooltip title="Youtube">
           <IconContact icon="uit:youtube" />

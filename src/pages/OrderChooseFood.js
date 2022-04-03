@@ -31,8 +31,13 @@ import BoxTypeFoodOrder from '../components/order/BoxTypeFoodOrder';
 import TableRowFoodChosen from '../components/order/TableRowFoodChosen';
 import { actionUserBackdrop, actionUserSnackbar } from '../redux/actions/userAction';
 import ModalInformationFood from '../components/order/ModalInformationFood';
-import { actionOrderGetOrder, actionOrderSetFoods } from '../redux/actions/orderAction';
+import {
+  actionGetAllBooks,
+  actionOrderGetOrder,
+  actionOrderSetFoods
+} from '../redux/actions/orderAction';
 import api from '../assets/api/api';
+import { sendBookSocket } from '../util/wssConnection';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -154,6 +159,7 @@ function OrderChooseFood() {
   const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
   const typefoods = useSelector((state) => state.food.typefoods);
   const user = useSelector((state) => state.user.user);
+  const broadcast = useSelector((state) => state.socket.broadcast);
   const [search, setSearch] = useState('');
   useEffect(() => {
     if (book.customerName === '') navigate('/home/order');
@@ -234,6 +240,12 @@ function OrderChooseFood() {
         })
       );
     } else {
+      const allSocketAdmin = [];
+      broadcast.forEach((broad) => {
+        if (broad.type === 'admin') {
+          allSocketAdmin.push(broad.socketId);
+        }
+      });
       dispatch(
         actionUserBackdrop({
           status: true,
@@ -269,6 +281,7 @@ function OrderChooseFood() {
           ...order
         })
         .then((res) => {
+          dispatch(actionGetAllBooks(user.id));
           axios
             .post(`${api}thongBao/create`, {
               donDatBan: {
@@ -280,7 +293,12 @@ function OrderChooseFood() {
               loaiThongBao: 'Đặt bàn',
               trangThai: 'Chưa đọc'
             })
-            .then((res) => {
+            .then((resNoti) => {
+              sendBookSocket({
+                socketIds: allSocketAdmin,
+                book: res.data,
+                notification: resNoti.data
+              });
               dispatch(
                 actionOrderGetOrder({
                   customerName: '',
