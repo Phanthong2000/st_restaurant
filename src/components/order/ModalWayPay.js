@@ -177,7 +177,7 @@ function ModalWayPay({ payment }) {
               color: '#fff'
             }}
           >
-            <Typography sx={{ color: '#fff', fontSize: '18px', maxHeight: '10px' }}>
+            <Typography sx={{ color: '#fff', fontSize: '14px', maxHeight: '10px' }}>
               {name === '' ? `Tên chủ thẻ` : name}
             </Typography>
             <Box>

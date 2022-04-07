@@ -9,7 +9,7 @@ import { actionOrderSuccess } from '../../redux/actions/orderAction';
 const heightScreen = window.innerHeight - 1;
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: `${heightScreen - 120}px`,
+  minHeight: `${heightScreen - 100}px`,
   marginTop: '120px',
   textAlign: 'center',
   display: 'flex',

@@ -17,6 +17,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
 import { Scrollbar } from 'smooth-scrollbar-react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
@@ -76,6 +77,17 @@ const ButtonOrder = styled(Button)(({ theme }) => ({
   ':hover': {
     color: theme.palette.white,
     background: theme.palette.black
+  }
+}));
+const BoxChooseHour = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  borderBottom: `1px solid gray`,
+  height: '30px',
+  cursor: `pointer`,
+  ':hover': {
+    borderBottom: `2px solid #000`
   }
 }));
 const options = [
@@ -171,7 +183,9 @@ function Order() {
   const user = useSelector((state) => state.user.user);
   const [area, setArea] = useState();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElHour, setAnchorElHour] = useState(null);
   const [modalInformation, setModalInformation] = useState(false);
+  const [hour, setHour] = useState();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -180,6 +194,13 @@ function Order() {
   };
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const handleClickHour = (event) => {
+    setAnchorElHour(event.currentTarget);
+  };
+  const handleCloseHour = () => {
+    setAnchorElHour(null);
+  };
+  const openHour = Boolean(anchorElHour);
   useEffect(() => {
     if (!loggedIn) navigate('/login');
     else {
@@ -192,7 +213,12 @@ function Order() {
     };
   }, [user]);
   const order = () => {
-    if (dateUse.getTime() <= new Date().getTime()) setError('Ngày tháng, giờ phải sau hiện tại');
+    if (!hour) setError('Vui lòng chọn giờ nhận bàn');
+    else if (
+      Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value <=
+      new Date().getTime()
+    )
+      setError('Ngày tháng, giờ phải sau hiện tại');
     else if (!validator.isNumeric(quantityCustomer) || parseInt(quantityCustomer, 10) <= 0)
       setError('Số khách phải lớn hơn 0');
     else if (!area) {
@@ -204,7 +230,7 @@ function Order() {
           customerName: fullName,
           email,
           phone,
-          date: dateUse,
+          date: Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value,
           quantityCustomer: parseInt(quantityCustomer, 10),
           timeUse: time,
           area,
@@ -225,6 +251,64 @@ function Order() {
   const closeModalInformationArea = () => {
     setModalInformation(false);
   };
+  const hours = [
+    {
+      name: '8:00',
+      value: 28800000
+    },
+    {
+      name: '9:00',
+      value: 32400000
+    },
+    {
+      name: '10:00',
+      value: 36000000
+    },
+    {
+      name: '11:00',
+      value: 39600000
+    },
+    {
+      name: '12:00',
+      value: 43200000
+    },
+    {
+      name: '13:00',
+      value: 46800000
+    },
+    {
+      name: '14:00',
+      value: 50400000
+    },
+    {
+      name: '15:00',
+      value: 54000000
+    },
+    {
+      name: '16:00',
+      value: 57600000
+    },
+    {
+      name: '17:00',
+      value: 61200000
+    },
+    {
+      name: '18:00',
+      value: 64800000
+    },
+    {
+      name: '19:00',
+      value: 68400000
+    },
+    {
+      name: '20:00',
+      value: 72000000
+    },
+    {
+      name: '21:00',
+      value: 75600000
+    }
+  ];
   return (
     <RootStyle>
       <BoxBreadcrumbs name="Đặt bàn" />
@@ -264,17 +348,55 @@ function Order() {
             </InputWapper>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
-                <Typography sx={{ fontSize: '16px' }}>Thời gian nhận bàn</Typography>
+                <Typography sx={{ fontSize: '16px' }}>Ngày nhận bàn</Typography>
                 <DatePicker
                   customInput={<InputInfo fullWidth />}
                   selected={dateUse}
-                  minDate={new Date().getTime()}
-                  showTimeSelect
-                  dateFormat="dd/MM/yyyy, hh:mm a"
+                  dateFormat="dd/MM/yyyy"
                   onChange={(newValue) => {
                     setDateUse(newValue);
                   }}
                 />
+              </InputWapper>
+              <InputWapper>
+                <Typography sx={{ fontSize: '16px' }}>Giờ nhận bàn</Typography>
+                <BoxChooseHour onClick={handleClickHour}>
+                  <Typography>{hour ? hour.name : `Chọn giờ`}</Typography>
+                  <Icon style={{ width: '20px', height: '20px' }} icon="bx:chevron-down" />
+                </BoxChooseHour>
+                <Popover
+                  open={openHour}
+                  anchorEl={anchorElHour}
+                  onClose={handleCloseHour}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                  }}
+                >
+                  <Card
+                    sx={{
+                      width: '100px',
+                      background: '#fff',
+                      padding: '5px',
+                      maxHeight: '200px',
+                      display: 'flex'
+                    }}
+                  >
+                    <Scrollbar alwaysShowTracks>
+                      {hours.map((item, index) => {
+                        const chooseHour = () => {
+                          setHour(item);
+                          handleCloseHour();
+                        };
+                        return (
+                          <ListItemButton onClick={chooseHour} key={index}>
+                            {item.name}
+                          </ListItemButton>
+                        );
+                      })}
+                    </Scrollbar>
+                  </Card>
+                </Popover>
               </InputWapper>
             </Box>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
