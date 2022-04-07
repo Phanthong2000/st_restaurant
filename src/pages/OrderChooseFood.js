@@ -164,19 +164,19 @@ function OrderChooseFood() {
   useEffect(() => {
     if (book.customerName === '') navigate('/home/order');
     return function () {
-      dispatch(
-        actionOrderGetOrder({
-          customerName: '',
-          email: '',
-          phone: '',
-          date: 0,
-          quantityCustomer: 0,
-          timeUse: 0,
-          area: {},
-          description: ''
-        })
-      );
-      dispatch(actionOrderSetFoods([]));
+      // dispatch(
+      //   actionOrderGetOrder({
+      //     customerName: '',
+      //     email: '',
+      //     phone: '',
+      //     date: 0,
+      //     quantityCustomer: 0,
+      //     timeUse: 0,
+      //     area: {},
+      //     description: ''
+      //   })
+      // );
+      // dispatch(actionOrderSetFoods([]));
     };
   }, []);
 
@@ -240,95 +240,7 @@ function OrderChooseFood() {
         })
       );
     } else {
-      const allSocketAdmin = [];
-      broadcast.forEach((broad) => {
-        if (broad.type === 'admin') {
-          allSocketAdmin.push(broad.socketId);
-        }
-      });
-      dispatch(
-        actionUserBackdrop({
-          status: true,
-          content: 'Đang xử lý đặt bàn'
-        })
-      );
-      const listChiTietDonDatBan = [];
-      foods.forEach((food) => {
-        listChiTietDonDatBan.push({
-          monAn: {
-            id: food.food.id
-          },
-          soLuong: food.quantity,
-          ghiChu: 'Ban đầu'
-        });
-      });
-      const order = {
-        khachHang: {
-          id: user.id
-        },
-        soLuongKhach: book.quantityCustomer,
-        thoiGianDuKienSuDung: book.timeUse.time,
-        thoiGianNhanBan: moment(book.date).format(),
-        trangThai: '0',
-        ghiChu: book.description,
-        khuVuc: {
-          id: book.area.id
-        },
-        listChiTietDonDatBan
-      };
-      axios
-        .post(`${api}donDatBan/create`, {
-          ...order
-        })
-        .then((res) => {
-          dispatch(actionGetAllBooks(user.id));
-          axios
-            .post(`${api}thongBao/create`, {
-              donDatBan: {
-                id: res.data.id
-              },
-              khachHang: {
-                id: user.id
-              },
-              loaiThongBao: 'Đặt bàn',
-              trangThai: 'Chưa đọc'
-            })
-            .then((resNoti) => {
-              sendBookSocket({
-                socketIds: allSocketAdmin,
-                book: res.data,
-                notification: resNoti.data
-              });
-              dispatch(
-                actionOrderGetOrder({
-                  customerName: '',
-                  email: '',
-                  phone: '',
-                  date: 0,
-                  quantityCustomer: 0,
-                  timeUse: 0,
-                  description: '',
-                  area: {}
-                })
-              );
-              dispatch(actionOrderSetFoods([]));
-              dispatch(
-                actionUserBackdrop({
-                  status: false,
-                  content: 'Đang xử lý đặt bàn'
-                })
-              );
-              dispatch(
-                actionUserSnackbar({
-                  status: true,
-                  content: 'Đặt bàn thành công',
-                  type: 'success'
-                })
-              );
-              navigate('/home/app');
-            });
-        })
-        .catch((err) => console.log(err));
+      navigate('/home/order-payment');
     }
   };
   return (
@@ -443,7 +355,7 @@ function OrderChooseFood() {
                       {`${getTotal().toLocaleString('es-US')} vnd`}
                     </TableCell>
                     <TableCell sx={{ textAlign: 'right' }} colSpan={4}>
-                      <ButtonPay onClick={payForOrder}>Thanh toán</ButtonPay>
+                      <ButtonPay onClick={payForOrder}>Tiếp tục</ButtonPay>
                     </TableCell>
                   </TableRow>
                 </TableFooter>

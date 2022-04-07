@@ -103,7 +103,11 @@ function FoodDetail() {
   const navigate = useNavigate();
   const getFoodById = () => {
     axios
-      .get(`${api}monAn/detail/${id}`)
+      .get(`${api}monAn/detail/${id}`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+        }
+      })
       .then((res) => {
         setFood(res.data);
         setAvatar(res.data.hinhAnh.at(0));

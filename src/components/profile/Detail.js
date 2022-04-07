@@ -156,36 +156,40 @@ function Detail() {
         })
       );
       axios
-        .get(`${api}khachHang/detail/${user.id}`)
+        .put(
+          `${api}khachHang/edit`,
+          {
+            ...user,
+            hoTen: fullName,
+            soDienThoai: phone,
+            email,
+            diaChi: address,
+            chungMinhThu: identification,
+            ngaySinh: birthday,
+            gioiTinh: 'Nam'
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
         .then((res) => {
-          axios
-            .put(`${api}khachHang/edit`, {
-              ...res.data,
-              hoTen: fullName,
-              soDienThoai: phone,
-              email,
-              diaChi: address,
-              chungMinhThu: identification,
-              ngaySinh: moment(birthday).format(),
-              gioiTinh: gender
+          dispatch(
+            actionUserBackdrop({
+              status: false,
+              content: 'Cập nhật thông tin'
             })
-            .then((res) => {
-              dispatch(
-                actionUserBackdrop({
-                  status: false,
-                  content: 'Cập nhật thông tin'
-                })
-              );
-              dispatch(
-                actionUserSnackbar({
-                  status: true,
-                  content: 'Cập nhật thông tin thành công',
-                  type: 'success'
-                })
-              );
-              window.location.reload();
+          );
+          dispatch(
+            actionUserSnackbar({
+              status: true,
+              content: 'Cập nhật thông tin thành công',
+              type: 'success'
             })
-            .catch((err) => console.log(err));
+          );
+          window.location.reload();
         })
         .catch((err) => {
           console.log(err);
@@ -213,41 +217,42 @@ function Detail() {
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             axios
-              .get(`${api}khachHang/detail/${user.id}`)
+              .put(
+                `${api}khachHang/edit`,
+                {
+                  ...user,
+                  anhDaiDien: downloadURL,
+                  hoTen: fullName,
+                  soDienThoai: phone,
+                  email,
+                  diaChi: address,
+                  chungMinhThu: identification,
+                  ngaySinh: moment(birthday).format(),
+                  gioiTinh: gender
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                  }
+                }
+              )
               .then((res) => {
-                axios
-                  .put(`${api}khachHang/edit`, {
-                    ...res.data,
-                    anhDaiDien: downloadURL,
-                    hoTen: fullName,
-                    soDienThoai: phone,
-                    email,
-                    diaChi: address,
-                    chungMinhThu: identification,
-                    ngaySinh: moment(birthday).format(),
-                    gioiTinh: gender
+                dispatch(
+                  actionUserBackdrop({
+                    status: false,
+                    content: 'Cập nhật thông tin'
                   })
-                  .then((res) => {
-                    dispatch(
-                      actionUserBackdrop({
-                        status: false,
-                        content: 'Cập nhật thông tin'
-                      })
-                    );
-                    dispatch(
-                      actionUserSnackbar({
-                        status: true,
-                        content: 'Cập nhật thông tin thành công',
-                        type: 'success'
-                      })
-                    );
-                    dispatch(actionGetUser(user.id));
+                );
+                dispatch(
+                  actionUserSnackbar({
+                    status: true,
+                    content: 'Cập nhật thông tin thành công',
+                    type: 'success'
                   })
-                  .catch((err) => console.log(err));
+                );
+                dispatch(actionGetUser(user.id));
               })
-              .catch((err) => {
-                console.log(err);
-              });
+              .catch((err) => console.log(err));
           });
         }
       );

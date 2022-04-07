@@ -77,38 +77,66 @@ function LoginInput() {
     navigate('/register');
   };
   const login = () => {
-    if (!username.match('^[a-zA-Z0-9]{6,32}$')) {
-      setError('Tên đăng nhập không hợp lệ');
-    } else if (!password.match('^[a-zA-Z0-9]{6,32}$')) setError('Mật khẩu không hợp lệ');
-    else {
-      axios
-        .get(`${api}taiKhoan/detail/tenDangNhap/${username}`)
-        .then((res) => {
-          if (
-            res.data.vaiTro.tenVaiTro === 'CUSTOMER' &&
-            res.data.matKhau === password &&
-            res.data.trangThai === 'Hiệu lực'
-          ) {
-            axios
-              .get(`${api}khachHang/detail/tenDangNhap/${username}`)
-              .then((resKH) => {
-                localStorage.setItem('user', JSON.stringify(resKH.data));
-                dispatch(actionAuthLoggedIn(true));
-                dispatch(actionGetUser(resKH.data.id));
-                navigate('/home/app');
-              })
-              .catch((err) => console.log(err));
-          } else if (res.data.trangThai === 'Đã khoá') {
-            setError('Tài khoản đã bị khoá');
-          } else {
-            setError('Tài khoản không tồn tại');
-          }
-        })
-        .catch((err) => {
-          setError('Tài khoản không tồn tại');
-        });
-    }
+    axios
+      .post(`${api}auth/login`, {
+        username,
+        password
+      })
+      .then((res) => {
+        setError('');
+        localStorage.setItem('token', JSON.stringify(res.data.accessToken));
+        axios
+          .get(`${api}khachHang/detail/tenDangNhap/${username}`, {
+            headers: {
+              Authorization: `Bearer ${res.data.accessToken}`
+            }
+          })
+          .then((resKH) => {
+            localStorage.setItem('user', JSON.stringify(resKH.data));
+            dispatch(actionAuthLoggedIn(true));
+            dispatch(actionGetUser(resKH.data.id));
+            navigate('/home/app');
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => {
+        console.log(err);
+        setError('Tài khoản hoặc mật khẩu không hợp lệ');
+      });
   };
+  // const login = () => {
+  //   if (!username.match('^[a-zA-Z0-9]{6,32}$')) {
+  //     setError('Tên đăng nhập không hợp lệ');
+  //   } else if (!password.match('^[a-zA-Z0-9]{6,32}$')) setError('Mật khẩu không hợp lệ');
+  //   else {
+  //     axios
+  //       .get(`${api}taiKhoan/detail/tenDangNhap/${username}`)
+  //       .then((res) => {
+  //         if (
+  //           res.data.vaiTro.tenVaiTro === 'CUSTOMER' &&
+  //           res.data.matKhau === password &&
+  //           res.data.trangThai === 'Hiệu lực'
+  //         ) {
+  //           axios
+  //             .get(`${api}khachHang/detail/tenDangNhap/${username}`)
+  //             .then((resKH) => {
+  //               localStorage.setItem('user', JSON.stringify(resKH.data));
+  //               dispatch(actionAuthLoggedIn(true));
+  //               dispatch(actionGetUser(resKH.data.id));
+  //               navigate('/home/app');
+  //             })
+  //             .catch((err) => console.log(err));
+  //         } else if (res.data.trangThai === 'Đã khoá') {
+  //           setError('Tài khoản đã bị khoá');
+  //         } else {
+  //           setError('Tài khoản không tồn tại');
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         setError('Tài khoản không tồn tại');
+  //       });
+  //   }
+  // };
   return (
     <RootStyle>
       <BoxInput>

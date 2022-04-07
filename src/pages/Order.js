@@ -268,6 +268,7 @@ function Order() {
                 <DatePicker
                   customInput={<InputInfo fullWidth />}
                   selected={dateUse}
+                  minDate={new Date().getTime()}
                   showTimeSelect
                   dateFormat="dd/MM/yyyy, hh:mm a"
                   onChange={(newValue) => {
@@ -306,12 +307,7 @@ function Order() {
                   disablePortal
                   id="combo-box-demo"
                   renderInput={(params) => (
-                    <TextField
-                      variant="standard"
-                      error={error === 'Vui lòng chọn loại món ăn'}
-                      sx={{ color: '#fff' }}
-                      {...params}
-                    />
+                    <TextField variant="standard" sx={{ color: '#fff' }} {...params} />
                   )}
                 />
               </InputWapper>

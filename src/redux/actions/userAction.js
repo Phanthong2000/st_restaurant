@@ -30,7 +30,11 @@ export const actionUserBackdrop = (data) => ({
 });
 export const actionGetUser = (id) => (dispatch) => {
   axios
-    .get(`${api}khachHang/detail/${id}`)
+    .get(`${api}khachHang/detail/${id}`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+      }
+    })
     .then((res) => {
       dispatch(actionUserGetUser(res.data));
     })

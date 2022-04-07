@@ -44,12 +44,7 @@ function Login() {
       notify();
     }
     return function () {
-      dispatch(
-        actionAuthRegister({
-          content: '',
-          type: ''
-        })
-      );
+      return null;
     };
   }, [register]);
   return (

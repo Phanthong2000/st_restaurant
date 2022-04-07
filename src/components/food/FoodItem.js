@@ -88,48 +88,78 @@ function FoodItem({ food }) {
     navigate(`/home/food-detail/${food.id}`);
   };
   const handleLove = () => {
-    axios.get(`${api}monAn/detail/${food.id}`).then((res) => {
-      if (!res.data.thich || !res.data.thich.includes(user.id)) {
-        if (res.data.thich) {
-          const loveNew = [...res.data.thich, user.id];
-          setLove(loveNew);
-          setOnAnim(true);
-          axios
-            .put(`${api}monAn/edit`, {
-              ...food,
-              thich: loveNew
-            })
-            .then((res) => {
-              console.log('ok', res);
-            })
-            .catch((err) => console.log(err));
-        } else {
-          const loveNew = [user.id];
-          setLove(loveNew);
-          setOnAnim(true);
-          axios
-            .put(`${api}monAn/edit`, {
-              ...food,
-              thich: loveNew
-            })
-            .then((res) => {
-              console.log('ok', res);
-            })
-            .catch((err) => console.log(err));
+    axios
+      .get(`${api}monAn/detail/${food.id}`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
         }
-      } else {
-        const loveNew = res.data.thich.filter((love) => love !== user.id);
-        setLove(loveNew);
-        axios
-          .put(`${api}monAn/edit`, {
-            ...food,
-            thich: loveNew
-          })
-          .then((res) => {
-            console.log('un', res.data);
-          });
-      }
-    });
+      })
+      .then((res) => {
+        if (!res.data.thich || !res.data.thich.includes(user.id)) {
+          if (res.data.thich) {
+            const loveNew = [...res.data.thich, user.id];
+            setLove(loveNew);
+            setOnAnim(true);
+            axios
+              .put(
+                `${api}monAn/edit`,
+                {
+                  ...food,
+                  thich: loveNew
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                  }
+                }
+              )
+              .then((res) => {
+                console.log('ok', res);
+              })
+              .catch((err) => console.log(err));
+          } else {
+            const loveNew = [user.id];
+            setLove(loveNew);
+            setOnAnim(true);
+            axios
+              .put(
+                `${api}monAn/edit`,
+                {
+                  ...food,
+                  thich: loveNew
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                  }
+                }
+              )
+              .then((res) => {
+                console.log('ok', res);
+              })
+              .catch((err) => console.log(err));
+          }
+        } else {
+          const loveNew = res.data.thich.filter((love) => love !== user.id);
+          setLove(loveNew);
+          axios
+            .put(
+              `${api}monAn/edit`,
+              {
+                ...food,
+                thich: loveNew
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                }
+              }
+            )
+            .then((res) => {
+              console.log('un', res.data);
+            });
+        }
+      });
   };
   return (
     <RootStyle data-aos="zoom-in" item xs={12} sm={6} md={6} lg={4} xl={4}>

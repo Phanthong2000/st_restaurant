@@ -83,6 +83,7 @@ function HomeNavbarHeader() {
     socketRef.current = socket;
     socketRef.current.emit('user-logout', { userId: userLogin.id });
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     dispatch(actionAuthLoggedIn(false));
     navigate('/login');
   };

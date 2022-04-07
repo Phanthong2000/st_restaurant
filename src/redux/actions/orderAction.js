@@ -7,7 +7,9 @@ import {
   ACTION_ORDER_DELETE_FOODS,
   ACTION_ORDER_MODAL_INFORMATION_FOOD,
   ACTION_ORDER_SET_FOODS,
-  ACTION_ORDER_GET_ALL_BOOKS
+  ACTION_ORDER_GET_ALL_BOOKS,
+  ACTION_ORDER_SUCCESS,
+  ACTION_ORDER_MODAL_WAYPAY
 } from './types';
 
 export const actionOrderGetOrder = (data) => ({
@@ -38,9 +40,20 @@ export const actionOrderGetAllBooks = (data) => ({
   type: ACTION_ORDER_GET_ALL_BOOKS,
   payload: data
 });
+export const actionOrderSuccess = (data) => ({
+  type: ACTION_ORDER_SUCCESS,
+  payload: data
+});
+export const actionModalWayPay = (data) => ({
+  type: ACTION_ORDER_MODAL_WAYPAY,
+  payload: data
+});
 export const actionGetAllBooks = (id) => (dispatch) => {
   axios
     .get(`${api}donDatBan/list/maKhachHang`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+      },
       params: {
         maKhachHang: id
       }

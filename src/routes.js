@@ -16,6 +16,8 @@ import HistoryOrder from './components/profile/HistoryOrder';
 import ForgetPassword from './pages/ForgetPassword';
 import Error from './pages/Error';
 import Demo from './pages/Demo';
+import OrderChooseWayPay from './pages/OrderChooseWayPay';
+import OrderSuccess from './components/order/OrderSuccess';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +51,8 @@ export default function Router() {
         { path: 'about', element: <About /> },
         { path: 'food-detail/:id', element: <FoodDetail /> },
         { path: 'order-choose-food', element: <OrderChooseFood /> },
+        { path: 'order-payment', element: <OrderChooseWayPay /> },
+        { path: 'order-success', element: <OrderSuccess /> },
         {
           path: 'profile',
           element: <Profile />,
