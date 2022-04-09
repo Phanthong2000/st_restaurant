@@ -7,7 +7,9 @@ import {
   ACTION_ORDER_SET_FOODS,
   ACTION_ORDER_GET_ALL_BOOKS,
   ACTION_ORDER_SUCCESS,
-  ACTION_ORDER_MODAL_WAYPAY
+  ACTION_ORDER_MODAL_WAYPAY,
+  ACTION_ORDER_GET_ORDER_MANY,
+  ACTION_ORDER_SET_FOODS_MANY
 } from '../actions/types';
 
 const defaultState = {
@@ -31,7 +33,19 @@ const defaultState = {
   modalWayPay: {
     status: false,
     wayPay: {}
-  }
+  },
+  bookMany: {
+    customerName: '',
+    email: '',
+    phone: '',
+    date: 0,
+    quantityCustomer: 0,
+    timeUse: 0,
+    area: {},
+    description: '',
+    listLoaiBan: []
+  },
+  foodsMany: []
 };
 
 // eslint-disable-next-line default-param-last
@@ -90,6 +104,17 @@ const orderReducer = (state = defaultState, action) => {
       return {
         ...state,
         modalWayPay: action.payload
+      };
+    case ACTION_ORDER_GET_ORDER_MANY:
+      console.log(action.payload);
+      return {
+        ...state,
+        bookMany: action.payload
+      };
+    case ACTION_ORDER_SET_FOODS_MANY:
+      return {
+        ...state,
+        foodsMany: action.payload
       };
     default:
       return state;

@@ -18,6 +18,7 @@ import Error from './pages/Error';
 import Demo from './pages/Demo';
 import OrderChooseWayPay from './pages/OrderChooseWayPay';
 import OrderSuccess from './components/order/OrderSuccess';
+import OrderChooseManyFood from './pages/OrderChooseManyFood';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +52,7 @@ export default function Router() {
         { path: 'about', element: <About /> },
         { path: 'food-detail/:id', element: <FoodDetail /> },
         { path: 'order-choose-food', element: <OrderChooseFood /> },
+        { path: 'order-choose-many-food', element: <OrderChooseManyFood /> },
         { path: 'order-payment', element: <OrderChooseWayPay /> },
         { path: 'order-success', element: <OrderSuccess /> },
         {

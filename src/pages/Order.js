@@ -12,9 +12,12 @@ import {
   IconButton,
   Tooltip,
   Modal,
-  Divider
+  Divider,
+  Radio,
+  InputBase,
+  FormHelperText
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import { Icon } from '@iconify/react';
 import moment from 'moment';
@@ -25,7 +28,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import validator from 'validator';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 import backgroundOrder from '../assets/images/backgroundOrder.png';
-import { actionOrderGetOrder } from '../redux/actions/orderAction';
+import {
+  actionOrderGetOrder,
+  actionOrderGetOrderMany,
+  actionOrderSetFoodsMany
+} from '../redux/actions/orderAction';
+import PopoverAntd from '../components/PopoverAntd';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -33,9 +41,9 @@ const RootStyle = styled(Box)(({ theme }) => ({
   background: theme.palette.background
 }));
 const BoxOrder = styled(Box)(({ theme }) => ({
-  width: '600px',
+  width: '700px',
   backgroundImage: `url(${backgroundOrder})`,
-  height: '800px',
+  height: '900px',
   backgroundSize: '100% 100%',
   backgroundRepeat: 'no-repeat',
   display: 'flex',
@@ -54,6 +62,11 @@ const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
   fontFamily: 'serif',
   fontSize: '40px'
+}));
+const BoxWrapper = styled(Box)(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center'
 }));
 const InputWapper = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -91,13 +104,13 @@ const BoxChooseHour = styled(Box)(({ theme }) => ({
   }
 }));
 const options = [
-  { label: '30p', time: 30 },
-  { label: '1h', time: 60 },
-  { label: '1h 30p', time: 90 },
-  { label: '2h', time: 120 },
-  { label: '2h 30p', time: 150 },
-  { label: '3h', time: 180 },
-  { label: '3h 30p', time: 210 }
+  { name: '30p', value: 1800000 },
+  { name: '1h', value: 3600000 },
+  { name: '1h 30p', value: 5400000 },
+  { name: '2h', value: 7200000 },
+  { name: '2h 30p', value: 9000000 },
+  { name: '3h', value: 10800000 },
+  { name: '3h 30p', value: 12600000 }
 ];
 function Area({ area, choose }) {
   const BoxArea = styled(ListItemButton)(({ theme }) => ({
@@ -167,7 +180,157 @@ function ModalInformationArea({ area, handleClose, open }) {
     </Modal>
   );
 }
+const ButtonAdd = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(0.5, 2),
+  textTransform: 'none',
+  color: theme.palette.white,
+  background: theme.palette.main,
+  marginTop: '1 0px',
+  fontWeight: 'bold',
+  ':hover': {
+    background: theme.palette.mainHover
+  }
+}));
+function BoxType({ type, index, types, handleDeleteType, handleChooseQuantity, quantityCustomer }) {
+  const quantityPerTableRef = useRef('');
+  const quantityTableRef = useRef('');
+  const [chosen, setChosen] = useState(false);
+  const [quantityPerTable, setQuantityPerTable] = useState('');
+  const [quantityTable, setQuantityTable] = useState('');
+  const [content, setContent] = useState('');
+  const [visible, setVisible] = useState(false);
+  const Wrapper = styled(Box)(({ theme }) => ({
+    width: '100%',
+    marginTop: '5px'
+  }));
+  const BoxInput = styled(Box)(({ theme }) => ({
+    border: `1px solid gray`,
+    marginLeft: '5px',
+    padding: '0px 5px',
+    width: '50px'
+  }));
+  const IconType = styled(Icon)(({ theme }) => ({
+    width: '30px',
+    height: '30px',
+    color: theme.palette.main,
+    cursor: 'pointer',
+    marginLeft: '20px'
+  }));
+  const ValueChosen = styled(Typography)(({ theme }) => ({
+    fontWeight: 'bold',
+    marginLeft: '5px'
+  }));
+  const handleChangePeoplePerTable = (text) => {
+    quantityPerTableRef.current = text;
+  };
+  const handleChangeQuantityTable = (text) => {
+    quantityTableRef.current = text;
+  };
+  const handleChoose = () => {
+    if (
+      types.filter(
+        (type) => parseInt(type.quantityPerTable, 10) === parseInt(quantityPerTableRef.current, 10)
+      ).length > 0
+    ) {
+      setContent('Số người mỗi bàn đã tồn tại');
+      setVisible(true);
+    } else if (
+      quantityPerTableRef.current.match('^[0-9]{0,}') &&
+      parseInt(quantityPerTableRef.current, 10) > 0 &&
+      quantityTableRef.current.match('^[0-9]{0,}') &&
+      parseInt(quantityTableRef.current, 10) > 0
+    ) {
+      let currentQuantity = 0;
+      types.forEach((type) => {
+        if (parseInt(type.quantityPerTable, 10) > 0) {
+          currentQuantity += parseInt(type.quantityPerTable, 10) * parseInt(type.quantityTable, 10);
+        }
+      });
+      const temp =
+        currentQuantity +
+        parseInt(quantityPerTableRef.current, 10) * parseInt(quantityTableRef.current, 10);
+      if (quantityCustomer < temp) {
+        setContent('Số người nhập đã lớn hơn số người sử dụng. Vui lòng nhập lại');
+        setVisible(true);
+      } else {
+        setQuantityPerTable(quantityPerTableRef.current);
+        setQuantityTable(quantityTableRef.current);
+        handleChooseQuantity(
+          parseInt(quantityPerTableRef.current, 10),
+          parseInt(quantityTableRef.current, 10),
+          index - 1
+        );
+        setChosen(true);
+      }
+    } else {
+      setContent('Thông tin nhập không hợp lệ');
+      setVisible(true);
+    }
+  };
+  const handleEdit = () => {
+    quantityPerTableRef.current = '';
+    quantityTableRef.current = '';
+    handleChooseQuantity(null, null, index - 1);
+    setChosen(false);
+  };
+  return (
+    <Wrapper>
+      <Typography sx={{ fontWeight: 'bold' }}>Loại {index}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '20px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ fontSize: '14px' }}>Số người mỗi bàn:</Typography>
+          {chosen ? (
+            <ValueChosen>{quantityPerTable}</ValueChosen>
+          ) : (
+            <BoxInput>
+              <InputBase onChange={(e) => handleChangePeoplePerTable(e.target.value)} />
+            </BoxInput>
+          )}
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '20px' }}>
+          <Typography sx={{ fontSize: '14px' }}>Số lượng bàn:</Typography>
+          {chosen ? (
+            <ValueChosen>{quantityTable}</ValueChosen>
+          ) : (
+            <BoxInput>
+              <InputBase onChange={(e) => handleChangeQuantityTable(e.target.value)} />
+            </BoxInput>
+          )}
+        </Box>
+        {chosen ? (
+          <Tooltip title="Thay đổi thông tin đã nhập">
+            <IconType onClick={handleEdit} icon="ri:edit-circle-fill" />
+          </Tooltip>
+        ) : (
+          <PopoverAntd
+            handleVisibleChange={() => setVisible(false)}
+            visible={visible}
+            content={content}
+          >
+            <Tooltip title="Đồng ý thông tin đã nhập">
+              <IconType
+                onClick={handleChoose}
+                style={{ color: 'lightgreen' }}
+                icon="bi:check-circle-fill"
+              />
+            </Tooltip>
+          </PopoverAntd>
+        )}
+        {index > 1 && types.length === index && (
+          <Tooltip title="Xoá loại">
+            <IconType
+              onClick={() => handleDeleteType(index - 1)}
+              style={{ color: 'red' }}
+              icon="ep:circle-close-filled"
+            />
+          </Tooltip>
+        )}
+      </Box>
+    </Wrapper>
+  );
+}
 function Order() {
+  const typesRef = useRef();
   const [dateUse, setDateUse] = useState(new Date());
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const allAreas = useSelector((state) => state.area.allAreas);
@@ -176,7 +339,7 @@ function Order() {
   const [phone, setPhone] = useState('');
   const [quantityCustomer, setQuantityCustomer] = useState('');
   const [description, setDescription] = useState('');
-  const [time, setTime] = useState(options.at(0));
+  const [time, setTime] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState('');
@@ -184,8 +347,18 @@ function Order() {
   const [area, setArea] = useState();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElHour, setAnchorElHour] = useState(null);
+  const [anchorElUse, setAnchorElUse] = useState(null);
   const [modalInformation, setModalInformation] = useState(false);
   const [hour, setHour] = useState();
+  const [type, setType] = useState('one');
+  const [errorAdd, setErrorAdd] = useState('');
+  const [errorQuantityCustomer, setErrorQuantityCustomer] = useState('');
+  const [types, setTypes] = useState([
+    {
+      quantityPerTable: '',
+      quantityTable: ''
+    }
+  ]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -201,6 +374,13 @@ function Order() {
     setAnchorElHour(null);
   };
   const openHour = Boolean(anchorElHour);
+  const handleClickUse = (event) => {
+    setAnchorElUse(event.currentTarget);
+  };
+  const handleCloseUse = () => {
+    setAnchorElUse(null);
+  };
+  const openUse = Boolean(anchorElUse);
   useEffect(() => {
     if (!loggedIn) navigate('/login');
     else {
@@ -213,6 +393,7 @@ function Order() {
     };
   }, [user]);
   const order = () => {
+    console.log('time', time);
     if (!hour) setError('Vui lòng chọn giờ nhận bàn');
     else if (
       Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value <=
@@ -220,24 +401,68 @@ function Order() {
     )
       setError('Ngày tháng, giờ phải sau hiện tại');
     else if (!validator.isNumeric(quantityCustomer) || parseInt(quantityCustomer, 10) <= 0)
-      setError('Số khách phải lớn hơn 0');
+      setError('Số người sử dụng phải lớn hơn 0');
+    else if (!time) setError('Vui lòng chọn thời gian sử dụng dự kiến');
+    else if (type === 'many' && types.filter((type) => type.quantityPerTable === '').length > 0)
+      setError('Vui nhập các loại bàn muốn đặt');
     else if (!area) {
       setError('Vui lòng chọn khu vực muốn đặt bàn');
     } else {
-      setError('');
-      dispatch(
-        actionOrderGetOrder({
-          customerName: fullName,
-          email,
-          phone,
-          date: Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value,
-          quantityCustomer: parseInt(quantityCustomer, 10),
-          timeUse: time,
-          area,
-          description
-        })
-      );
-      navigate('/home/order-choose-food');
+      let currentQuantity = 0;
+      types.forEach((type) => {
+        if (parseInt(type.quantityPerTable, 10) > 0) {
+          currentQuantity += parseInt(type.quantityPerTable, 10) * parseInt(type.quantityTable, 10);
+        }
+      });
+      if (parseInt(quantityCustomer, 10) !== parseInt(currentQuantity, 10) && type === 'many') {
+        setError('Số người mỗi bàn chưa bằng số người sử dụng');
+      } else {
+        setError('');
+        if (type === 'one') {
+          dispatch(
+            actionOrderGetOrder({
+              customerName: fullName,
+              email,
+              phone,
+              date: Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value,
+              quantityCustomer: parseInt(quantityCustomer, 10),
+              timeUse: time,
+              area,
+              description
+            })
+          );
+          navigate('/home/order-choose-food');
+        } else {
+          const listLoaiBan = [];
+          const foodsMany = [];
+          for (let i = 0; i < types.length; i += 1) {
+            foodsMany.push({
+              order: i + 1,
+              foods: []
+            });
+            listLoaiBan.push({
+              order: i + 1,
+              soLuongBan: types.at(i).quantityTable,
+              soNguoiMoiBan: types.at(i).quantityPerTable
+            });
+          }
+          dispatch(
+            actionOrderGetOrderMany({
+              customerName: fullName,
+              email,
+              phone,
+              date: Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value,
+              quantityCustomer: parseInt(quantityCustomer, 10),
+              timeUse: time,
+              area,
+              description,
+              listLoaiBan
+            })
+          );
+          dispatch(actionOrderSetFoodsMany(foodsMany));
+          navigate('/home/order-choose-many-food');
+        }
+      }
     }
   };
   const chooseArea = (area) => {
@@ -250,6 +475,46 @@ function Order() {
   };
   const closeModalInformationArea = () => {
     setModalInformation(false);
+  };
+  const handleAddType = () => {
+    let currentQuantity = 0;
+    types.forEach((type) => {
+      if (parseInt(type.quantityPerTable, 10) > 0) {
+        currentQuantity += parseInt(type.quantityPerTable, 10) * parseInt(type.quantityTable, 10);
+      }
+    });
+    if (parseInt(quantityCustomer, 10) === parseInt(currentQuantity, 10)) {
+      setErrorAdd('Vui người sử dụng đã bằng với số người mỗi bàn và số bàn');
+    } else if (
+      types.filter((type) => type.quantityPerTable === '' || !type.quantityPerTable).length > 0
+    ) {
+      setErrorAdd('Vui lòng nhập các loại bàn');
+    } else {
+      setErrorAdd('');
+      setTypes([
+        ...types,
+        {
+          quantityPerTable: '',
+          quantityTable: ''
+        }
+      ]);
+    }
+  };
+  const handleDeleteType = (index) => {
+    setTypes(types.slice(0, index));
+  };
+  const handleChooseQuantity = (quantityPerTable, quantityTable, index) => {
+    setTypes(
+      types
+        .slice(0, index)
+        .concat([
+          {
+            quantityPerTable,
+            quantityTable
+          }
+        ])
+        .concat(types.slice(index + 1, types.length))
+    );
   };
   const hours = [
     {
@@ -309,11 +574,24 @@ function Order() {
       value: 75600000
     }
   ];
+  const handleChangeQuantityCustomer = (text) => {
+    if (text.match(`^[0-9]{0,}$`)) {
+      setQuantityCustomer(text);
+      setErrorQuantityCustomer('');
+    } else {
+      setErrorQuantityCustomer('Vui lòng nhập số người sử dụng');
+    }
+  };
+  const handleChangeTypeRadio = (value) => {
+    if (value === 'many' && (quantityCustomer === 0 || quantityCustomer === '')) {
+      setErrorQuantityCustomer('Vui lòng nhập số người sử dụng');
+    } else setType(value);
+  };
   return (
     <RootStyle>
       <BoxBreadcrumbs name="Đặt bàn" />
       <Box sx={{ background: '#fff', display: 'flex', justifyContent: 'center' }}>
-        <BoxOrder>
+        <BoxOrder sx={{ height: type === 'many' && `${900 + types.length * 60}px` }}>
           <BoxInput>
             <Title>Đặt bàn</Title>
             <InputWapper>
@@ -346,7 +624,7 @@ function Order() {
                 placeholder="0123456789"
               />
             </InputWapper>
-            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+            <BoxWrapper sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
                 <Typography sx={{ fontSize: '16px' }}>Ngày nhận bàn</Typography>
                 <DatePicker
@@ -362,7 +640,10 @@ function Order() {
                 <Typography sx={{ fontSize: '16px' }}>Giờ nhận bàn</Typography>
                 <BoxChooseHour onClick={handleClickHour}>
                   <Typography>{hour ? hour.name : `Chọn giờ`}</Typography>
-                  <Icon style={{ width: '20px', height: '20px' }} icon="bx:chevron-down" />
+                  <Icon
+                    style={{ width: '18px', height: '17px', color: 'gray' }}
+                    icon="bx:caret-down"
+                  />
                 </BoxChooseHour>
                 <Popover
                   open={openHour}
@@ -398,42 +679,101 @@ function Order() {
                   </Card>
                 </Popover>
               </InputWapper>
-            </Box>
-            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+            </BoxWrapper>
+            <BoxWrapper sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <InputWapper>
-                <Typography sx={{ fontSize: '16px' }}>Số khách:</Typography>
-                <InputInfo
-                  value={quantityCustomer}
-                  onChange={(e) => setQuantityCustomer(e.target.value)}
-                  fullWidth
-                  placeholder="0"
-                />
-              </InputWapper>
-              <InputWapper>
-                <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
-                <Autocomplete
-                  value={time}
-                  disableClearable
-                  onChange={(event, newValue) => {
-                    console.log(newValue);
-                    setTime(newValue);
+                <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng dự kiến:</Typography>
+                <BoxChooseHour onClick={handleClickUse}>
+                  <Typography>{time ? time.name : `Chọn thời gian`}</Typography>
+                  <Icon
+                    style={{ width: '18px', height: '17px', color: 'gray' }}
+                    icon="bx:caret-down"
+                  />
+                </BoxChooseHour>
+                <Popover
+                  open={openUse}
+                  anchorEl={anchorElUse}
+                  onClose={handleCloseUse}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
                   }}
-                  sx={{ zIndex: 4 }}
-                  getOptionLabel={(option) => option.label}
-                  options={options}
-                  renderOption={(params, option) => (
-                    <Box sx={{ background: '#fff' }} {...params}>
-                      {option.label}
-                    </Box>
-                  )}
-                  disablePortal
-                  id="combo-box-demo"
-                  renderInput={(params) => (
-                    <TextField variant="standard" sx={{ color: '#fff' }} {...params} />
-                  )}
-                />
+                >
+                  <Card
+                    sx={{
+                      width: '100px',
+                      background: '#fff',
+                      padding: '5px',
+                      maxHeight: '200px',
+                      display: 'flex'
+                    }}
+                  >
+                    <Scrollbar alwaysShowTracks>
+                      {options.map((item, index) => {
+                        const chooseUse = () => {
+                          setTime(item);
+                          handleCloseUse();
+                        };
+                        return (
+                          <ListItemButton onClick={chooseUse} key={index}>
+                            {item.name}
+                          </ListItemButton>
+                        );
+                      })}
+                    </Scrollbar>
+                  </Card>
+                </Popover>
               </InputWapper>
-            </Box>
+              <InputWapper>
+                <Typography sx={{ fontSize: '16px' }}>Số người sử dụng:</Typography>
+                <InputInfo
+                  id="quantityCustomer"
+                  value={quantityCustomer}
+                  onChange={(e) => handleChangeQuantityCustomer(e.target.value)}
+                  fullWidth
+                  placeholder="Nhập số người sử dụng"
+                />
+                <FormHelperText error id="quantityCustomer">
+                  {errorQuantityCustomer}
+                </FormHelperText>
+              </InputWapper>
+            </BoxWrapper>
+            <BoxWrapper>
+              <BoxWrapper>
+                <Radio
+                  onChange={() => handleChangeTypeRadio('one')}
+                  value="one"
+                  checked={type === 'one'}
+                />
+                <Typography>Đặt 1 bàn</Typography>
+              </BoxWrapper>
+              <BoxWrapper>
+                <Radio
+                  onChange={() => handleChangeTypeRadio('many')}
+                  value="many"
+                  checked={type === 'many'}
+                />
+                <Typography>Đặt nhiều bàn</Typography>
+              </BoxWrapper>
+            </BoxWrapper>
+            {type === 'many' && (
+              <Box sx={{ padding: `0px 20px` }}>
+                {types.map((item, index) => (
+                  <BoxType
+                    quantityCustomer={quantityCustomer}
+                    key={index}
+                    type={item}
+                    index={index + 1}
+                    types={types}
+                    handleChooseQuantity={handleChooseQuantity}
+                    handleDeleteType={handleDeleteType}
+                  />
+                ))}
+                <Typography sx={{ color: 'red' }}>{errorAdd}</Typography>
+                <ButtonAdd onClick={handleAddType}>Thêm</ButtonAdd>
+              </Box>
+            )}
+
             <InputWapper>
               <Typography sx={{ fontSize: '16px' }}>Khu vực:</Typography>
               {area ? (

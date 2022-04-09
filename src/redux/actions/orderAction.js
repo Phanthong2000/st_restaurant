@@ -9,7 +9,9 @@ import {
   ACTION_ORDER_SET_FOODS,
   ACTION_ORDER_GET_ALL_BOOKS,
   ACTION_ORDER_SUCCESS,
-  ACTION_ORDER_MODAL_WAYPAY
+  ACTION_ORDER_MODAL_WAYPAY,
+  ACTION_ORDER_GET_ORDER_MANY,
+  ACTION_ORDER_SET_FOODS_MANY
 } from './types';
 
 export const actionOrderGetOrder = (data) => ({
@@ -46,6 +48,14 @@ export const actionOrderSuccess = (data) => ({
 });
 export const actionModalWayPay = (data) => ({
   type: ACTION_ORDER_MODAL_WAYPAY,
+  payload: data
+});
+export const actionOrderGetOrderMany = (data) => ({
+  type: ACTION_ORDER_GET_ORDER_MANY,
+  payload: data
+});
+export const actionOrderSetFoodsMany = (data) => ({
+  type: ACTION_ORDER_SET_FOODS_MANY,
   payload: data
 });
 export const actionGetAllBooks = (id) => (dispatch) => {

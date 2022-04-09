@@ -298,7 +298,7 @@ function OrderChooseFood() {
         </InputWapper>
         <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
-          <InputInfo disabled value={book.timeUse.label} fullWidth placeholder="0" />
+          <InputInfo disabled value={book.timeUse.name} fullWidth placeholder="0" />
         </InputWapper>
         <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
           <Typography sx={{ fontSize: '16px' }}>Khu vực:</Typography>
