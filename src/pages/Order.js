@@ -393,7 +393,6 @@ function Order() {
     };
   }, [user]);
   const order = () => {
-    console.log('time', time);
     if (!hour) setError('Vui lòng chọn giờ nhận bàn');
     else if (
       Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value <=
@@ -404,7 +403,7 @@ function Order() {
       setError('Số người sử dụng phải lớn hơn 0');
     else if (!time) setError('Vui lòng chọn thời gian sử dụng dự kiến');
     else if (type === 'many' && types.filter((type) => type.quantityPerTable === '').length > 0)
-      setError('Vui nhập các loại bàn muốn đặt');
+      setError('Vui lòng nhập các loại bàn muốn đặt');
     else if (!area) {
       setError('Vui lòng chọn khu vực muốn đặt bàn');
     } else {
@@ -420,7 +419,15 @@ function Order() {
         setError('');
         if (type === 'one') {
           dispatch(
-            actionOrderGetOrder({
+            actionOrderSetFoodsMany([
+              {
+                order: 1,
+                foods: []
+              }
+            ])
+          );
+          dispatch(
+            actionOrderGetOrderMany({
               customerName: fullName,
               email,
               phone,
@@ -428,10 +435,17 @@ function Order() {
               quantityCustomer: parseInt(quantityCustomer, 10),
               timeUse: time,
               area,
-              description
+              description,
+              listLoaiBan: [
+                {
+                  order: 1,
+                  soLuongBan: 1,
+                  soNguoiMoiBan: parseInt(quantityCustomer, 10)
+                }
+              ]
             })
           );
-          navigate('/home/order-choose-food');
+          navigate('/home/order-choose-many-food');
         } else {
           const listLoaiBan = [];
           const foodsMany = [];
@@ -484,7 +498,7 @@ function Order() {
       }
     });
     if (parseInt(quantityCustomer, 10) === parseInt(currentQuantity, 10)) {
-      setErrorAdd('Vui người sử dụng đã bằng với số người mỗi bàn và số bàn');
+      setErrorAdd('Người sử dụng đã bằng với số người mỗi bàn và số bàn');
     } else if (
       types.filter((type) => type.quantityPerTable === '' || !type.quantityPerTable).length > 0
     ) {
@@ -587,11 +601,20 @@ function Order() {
       setErrorQuantityCustomer('Vui lòng nhập số người sử dụng');
     } else setType(value);
   };
+  const checkQuantity = () => {
+    let currentQuantity = 0;
+    types.forEach((type) => {
+      if (parseInt(type.quantityPerTable, 10) > 0) {
+        currentQuantity += parseInt(type.quantityPerTable, 10) * parseInt(type.quantityTable, 10);
+      }
+    });
+    return parseInt(quantityCustomer, 10) - currentQuantity;
+  };
   return (
     <RootStyle>
       <BoxBreadcrumbs name="Đặt bàn" />
       <Box sx={{ background: '#fff', display: 'flex', justifyContent: 'center' }}>
-        <BoxOrder sx={{ height: type === 'many' && `${900 + types.length * 60}px` }}>
+        <BoxOrder sx={{ height: type === 'many' && `${900 + types.length * 85}px` }}>
           <BoxInput>
             <Title>Đặt bàn</Title>
             <InputWapper>
@@ -628,6 +651,7 @@ function Order() {
               <InputWapper>
                 <Typography sx={{ fontSize: '16px' }}>Ngày nhận bàn</Typography>
                 <DatePicker
+                  minDate={new Date()}
                   customInput={<InputInfo fullWidth />}
                   selected={dateUse}
                   dateFormat="dd/MM/yyyy"
@@ -758,6 +782,7 @@ function Order() {
             </BoxWrapper>
             {type === 'many' && (
               <Box sx={{ padding: `0px 20px` }}>
+                <Typography>Còn lại: {checkQuantity()} người</Typography>
                 {types.map((item, index) => (
                   <BoxType
                     quantityCustomer={quantityCustomer}
@@ -856,14 +881,10 @@ function Order() {
                 placeholder="Aa"
               />
             </InputWapper>
-            <Box
-              sx={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '5px' }}
-            >
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
               <Typography sx={{ color: 'red' }}>{error}</Typography>
             </Box>
-            <Box
-              sx={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '5px' }}
-            >
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
               <ButtonOrder onClick={order}>Đặt bàn</ButtonOrder>
             </Box>
           </BoxInput>

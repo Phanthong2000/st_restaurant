@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {
@@ -12,12 +12,14 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  Button
+  Button,
+  Tabs,
+  Tab,
+  TableFooter
 } from '@mui/material';
 
 const RootStyle = styled(Card)(({ theme }) => ({
-  width: '90%',
-  margin: '20px 5%',
+  width: '100%',
   padding: theme.spacing(2),
   background: theme.palette.white
 }));
@@ -78,32 +80,7 @@ function RowFood({ food, index }) {
     </TableRow>
   );
 }
-function BookDetail({ book, back }) {
-  const checkStatus = () => {
-    if (
-      book.trangThai === `0` &&
-      new Date().getTime() -
-        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) <=
-        0
-    )
-      return `Chưa sử dụng`;
-    if (book.trangThai === '1') return 'Đã sử dụng';
-    if (
-      new Date().getTime() -
-        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) >
-        0 &&
-      book.trangThai === `0`
-    )
-      return `Đã quá hạn`;
-    if (book.trangThai === '2') return 'Đang sử dụng';
-  };
-  const getTotal = () => {
-    let total = 0;
-    book.listChiTietDonDatBan.forEach((don) => {
-      total += don.soLuong * don.monAn.donGia;
-    });
-    return total;
-  };
+function TableFood({ loaiBan, tab }) {
   const header = [
     {
       name: 'STT',
@@ -130,6 +107,88 @@ function BookDetail({ book, back }) {
       width: '15%'
     }
   ];
+  const getTotalTab = () => {
+    let total = 0;
+    loaiBan.listChiTietDonDatBan.forEach((food) => {
+      total += food.monAn.donGia * food.soLuong;
+    });
+    return total;
+  };
+  if (tab !== loaiBan.order) return null;
+  return (
+    <>
+      <Typography
+        sx={{ width: '100%', padding: '10px 0px 0px 20px', fontWeight: 'bold', fontSize: '20px' }}
+      >
+        Số người mỗi bàn: {loaiBan.soNguoiMoiBan} - Số bàn: {loaiBan.soLuongBan}
+      </Typography>
+      <Card sx={{ width: '100%', marginTop: '10px' }}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ background: 'gray' }}>
+                {header.map((item, index) => (
+                  <TableCell
+                    key={index}
+                    sx={{ width: item.width, color: '#fff', fontWeight: 'bold' }}
+                  >
+                    {item.name}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {loaiBan.listChiTietDonDatBan.map((item, index) => (
+                <RowFood key={index} index={index} food={item} />
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell sx={{ textAlign: 'center' }} colSpan={6}>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    Tổng tiền loại {tab}: {getTotalTab().toLocaleString(`es-US`)} vnd
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      </Card>
+    </>
+  );
+}
+function BookDetail({ book, back }) {
+  const [tab, setTab] = useState(book.listLoaiBan.at(0).order);
+  const checkStatus = () => {
+    if (
+      book.trangThai === `0` &&
+      new Date().getTime() -
+        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) <=
+        0
+    )
+      return `Chưa sử dụng`;
+    if (book.trangThai === '1') return 'Đã sử dụng';
+    if (
+      new Date().getTime() -
+        (Date.parse(book.thoiGianNhanBan) + book.thoiGianDuKienSuDung * 60 * 1000) >
+        0 &&
+      book.trangThai === `0`
+    )
+      return `Đã quá hạn`;
+    if (book.trangThai === '2') return 'Đang sử dụng';
+  };
+  const getTotal = () => {
+    let total = 0;
+    book.listLoaiBan.forEach((loaiBan) => {
+      loaiBan.listChiTietDonDatBan.forEach((item) => {
+        total += item.monAn.donGia * item.soLuong;
+      });
+    });
+    return total;
+  };
+  const handleChangeTab = (event, newValue) => {
+    setTab(newValue);
+  };
   return (
     <RootStyle>
       <Title>Thông tin đơn đặt bàn</Title>
@@ -139,7 +198,7 @@ function BookDetail({ book, back }) {
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Thời gian dự kiến sử dụng: </LabelDetail>
-        <ContentDetail>{book.thoiGianDuKienSuDung}p</ContentDetail>
+        <ContentDetail>{book.thoiGianDuKienSuDung / (60 * 1000)}p</ContentDetail>
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Số lượng khách: </LabelDetail>
@@ -160,35 +219,22 @@ function BookDetail({ book, back }) {
         </ContentDetail>
       </BoxDetail>
       <BoxDetail>
-        <LabelDetail>Số lượng món ăn: {book.listChiTietDonDatBan.length} món</LabelDetail>
+        <LabelDetail>Số lượng loại bàn: {book.listLoaiBan.length}</LabelDetail>
         <LabelDetail>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnđ</LabelDetail>
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Danh sách món ăn của đơn đặt bàn</LabelDetail>
       </BoxDetail>
-      <Card sx={{ width: '100%', marginTop: '10px' }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ background: 'gray' }}>
-                {header.map((item, index) => (
-                  <TableCell
-                    key={index}
-                    sx={{ width: item.width, color: '#fff', fontWeight: 'bold' }}
-                  >
-                    {item.name}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {book.listChiTietDonDatBan.map((item, index) => (
-                <RowFood key={index} index={index} food={item} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+      <Box sx={{ width: '100%' }}>
+        <Tabs value={tab} onChange={handleChangeTab}>
+          {book.listLoaiBan.map((item, index) => (
+            <Tab key={index} value={item.order} label={`Loại ${item.order}`} />
+          ))}
+        </Tabs>
+        {book.listLoaiBan.map((item, index) => (
+          <TableFood key={index} tab={tab} loaiBan={item} />
+        ))}
+      </Box>
       <ButtonBack onClick={back}>Quay lại</ButtonBack>
     </RootStyle>
   );

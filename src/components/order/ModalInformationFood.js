@@ -11,8 +11,13 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionOrderModalInformation, actionOrderAddFoods } from '../../redux/actions/orderAction';
+import {
+  actionOrderModalInformation,
+  actionOrderAddFoods,
+  actionOrderSetFoodsMany
+} from '../../redux/actions/orderAction';
 
 const BoxModal = styled(Card)(({ theme }) => ({
   position: 'absolute',
@@ -82,9 +87,13 @@ function SmallImage({ image, avatar, hover }) {
     />
   );
 }
-function ModalInformationFood() {
+ModalInformationFood.prototype = {
+  tab: PropTypes.number
+};
+function ModalInformationFood({ tab }) {
   const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
   const [avatarFood, setAvatarFood] = useState(modalInformationFood.food.hinhAnh.at(0));
+  const foodsMany = useSelector((state) => state.order.foodsMany);
   const dispatch = useDispatch();
   const hoverSmallImage = (image) => {
     setAvatarFood(image);
@@ -93,12 +102,20 @@ function ModalInformationFood() {
     if (modalInformationFood.food.moTa.length < 200) return `${modalInformationFood.food.moTa}`;
     return `${modalInformationFood.food.moTa.substring(0, 200)}...`;
   };
+
   const chooseFood = () => {
+    let data = foodsMany.at(tab - 1);
+    data = {
+      order: tab,
+      foods: [...data.foods, { food: modalInformationFood.food, soLuong: 1 }]
+    };
     dispatch(
-      actionOrderAddFoods({
-        food: modalInformationFood.food,
-        quantity: 1
-      })
+      actionOrderSetFoodsMany(
+        foodsMany
+          .slice(0, tab - 1)
+          .concat([data])
+          .concat(foodsMany.slice(tab, foodsMany.length))
+      )
     );
     dispatch(
       actionOrderModalInformation({
@@ -106,7 +123,7 @@ function ModalInformationFood() {
         food: {}
       })
     );
-    window.scrollTo({ left: 0, top: 300, behavior: 'smooth' });
+    window.scrollTo({ left: 0, top: 200, behavior: 'smooth' });
   };
   return (
     <Modal
@@ -163,6 +180,21 @@ function ModalInformationFood() {
               <PriceFood>{`${modalInformationFood.food.donGia.toLocaleString(
                 'es-Us'
               )} vnd`}</PriceFood>
+              <Box sx={{ width: '100', display: 'flex', alignItems: 'center' }}>
+                <Icon
+                  style={{ color: 'red', width: '30px', height: '30px' }}
+                  icon="ant-design:heart-twotone"
+                />
+                {!modalInformationFood.food.listKhachHangThichMonAn ? (
+                  <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+                    0 yêu thích
+                  </Typography>
+                ) : (
+                  <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+                    {`${modalInformationFood.food.listKhachHangThichMonAn.length} yêu thích`}
+                  </Typography>
+                )}
+              </Box>
               <Typography>{checkDescriptionLength()}</Typography>
             </Box>
             <ButtonChooseFood onClick={chooseFood}>Chọn món</ButtonChooseFood>

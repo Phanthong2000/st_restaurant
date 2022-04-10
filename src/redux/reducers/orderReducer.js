@@ -106,7 +106,6 @@ const orderReducer = (state = defaultState, action) => {
         modalWayPay: action.payload
       };
     case ACTION_ORDER_GET_ORDER_MANY:
-      console.log(action.payload);
       return {
         ...state,
         bookMany: action.payload

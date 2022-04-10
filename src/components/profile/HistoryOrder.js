@@ -58,8 +58,10 @@ function Book({ book, click }) {
   };
   const getTotal = () => {
     let total = 0;
-    book.listChiTietDonDatBan.forEach((don) => {
-      total += don.soLuong * don.monAn.donGia;
+    book.listLoaiBan.forEach((loaiBan) => {
+      loaiBan.listChiTietDonDatBan.forEach((item) => {
+        total += item.monAn.donGia * item.soLuong;
+      });
     });
     return total;
   };
@@ -69,14 +71,14 @@ function Book({ book, click }) {
         <CheckIn>
           Thời gian nhận bàn: {moment(book.thoiGianNhanBan).format(`hh:mm a DD/MM/yyyy`)}
         </CheckIn>
-        <CheckIn>Thời gian dự kiến sử dụng: {book.thoiGianDuKienSuDung}p</CheckIn>
+        <CheckIn>Thời gian dự kiến sử dụng: {book.thoiGianDuKienSuDung / (60 * 1000)}p</CheckIn>
         <CheckIn>Số lượng khách: {book.soLuongKhach} người</CheckIn>
         <CheckIn>Trạng thái: {checkStatus()}</CheckIn>
         <CheckIn>Khu vực: {book.khuVuc && book.khuVuc.tenKhuVuc}</CheckIn>
         <CheckIn>
           Thời gian đặt bàn: {moment(Date.parse(book.createAt)).format(`hh:mm a DD/MM/yyyy`)}
         </CheckIn>
-        <CheckIn>Số lượng món ăn: {book.listChiTietDonDatBan.length} món</CheckIn>
+        <CheckIn>Số loại bàn: {book.listLoaiBan.length}</CheckIn>
         <CheckIn>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnđ</CheckIn>
       </Box>
       <ButtonSeeDetail onClick={click}>Xem chi tiết</ButtonSeeDetail>

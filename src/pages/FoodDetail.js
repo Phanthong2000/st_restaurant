@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, styled, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import foods from '../assets/data/foods';
+import { Icon } from '@iconify/react';
 import api from '../assets/api/api';
 
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -161,6 +161,21 @@ function FoodDetail() {
           <Box>
             <NameFood>{food.tenMonAn}</NameFood>
             <PriceFood>{`${food.donGia.toLocaleString('es-US')} vnđ`}</PriceFood>
+            <Box sx={{ width: '100', display: 'flex', alignItems: 'center' }}>
+              <Icon
+                style={{ color: 'red', width: '30px', height: '30px' }}
+                icon="ant-design:heart-twotone"
+              />
+              {!food.listKhachHangThichMonAn ? (
+                <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+                  0 yêu thích
+                </Typography>
+              ) : (
+                <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+                  {`${food.listKhachHangThichMonAn.length} yêu thích`}
+                </Typography>
+              )}
+            </Box>
             <BoxDescription>
               <Typography
                 sx={{ color: 'gray', fontSize: '16px', width: '20%', fontWeight: 'bold' }}

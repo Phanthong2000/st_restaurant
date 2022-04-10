@@ -78,7 +78,7 @@ function FoodItem({ food }) {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const loggedIn = useSelector((state) => state.auth.loggedIn);
-  const [love, setLove] = useState(food.thich);
+  const [love, setLove] = useState(food.listKhachHangThichMonAn);
   const [onAnim, setOnAnim] = useState(false);
   const checkDescriptionLength = () => {
     if (food.moTa.length < 200) return `${food.moTa}`;
@@ -95,9 +95,13 @@ function FoodItem({ food }) {
         }
       })
       .then((res) => {
-        if (!res.data.thich || !res.data.thich.includes(user.id)) {
-          if (res.data.thich) {
-            const loveNew = [...res.data.thich, user.id];
+        if (
+          !res.data.listKhachHangThichMonAn ||
+          res.data.listKhachHangThichMonAn.filter((item) => item.id === user.id).length <= 0
+        ) {
+          if (res.data.listKhachHangThichMonAn) {
+            const loveNew = [...res.data.listKhachHangThichMonAn, { id: user.id }];
+            console.log(loveNew.filter((item) => item.id === user.id).length);
             setLove(loveNew);
             setOnAnim(true);
             axios
@@ -105,7 +109,7 @@ function FoodItem({ food }) {
                 `${api}monAn/edit`,
                 {
                   ...food,
-                  thich: loveNew
+                  listKhachHangThichMonAn: loveNew
                 },
                 {
                   headers: {
@@ -113,12 +117,9 @@ function FoodItem({ food }) {
                   }
                 }
               )
-              .then((res) => {
-                console.log('ok', res);
-              })
               .catch((err) => console.log(err));
           } else {
-            const loveNew = [user.id];
+            const loveNew = [{ id: user.id }];
             setLove(loveNew);
             setOnAnim(true);
             axios
@@ -126,7 +127,7 @@ function FoodItem({ food }) {
                 `${api}monAn/edit`,
                 {
                   ...food,
-                  thich: loveNew
+                  listKhachHangThichMonAn: loveNew
                 },
                 {
                   headers: {
@@ -134,30 +135,23 @@ function FoodItem({ food }) {
                   }
                 }
               )
-              .then((res) => {
-                console.log('ok', res);
-              })
               .catch((err) => console.log(err));
           }
         } else {
-          const loveNew = res.data.thich.filter((love) => love !== user.id);
+          const loveNew = res.data.listKhachHangThichMonAn.filter((love) => love.id !== user.id);
           setLove(loveNew);
-          axios
-            .put(
-              `${api}monAn/edit`,
-              {
-                ...food,
-                thich: loveNew
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
-                }
+          axios.put(
+            `${api}monAn/edit`,
+            {
+              ...food,
+              listKhachHangThichMonAn: loveNew
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
               }
-            )
-            .then((res) => {
-              console.log('un', res.data);
-            });
+            }
+          );
         }
       });
   };
@@ -168,7 +162,7 @@ function FoodItem({ food }) {
           <AvatarFood onClick={goToFoodDetail} src={food.hinhAnh.at(0)} />
           {loggedIn && (
             <Box>
-              {love && love.includes(user.id) ? (
+              {love && love.filter((item) => item.id === user.id).length > 0 ? (
                 <IconButton
                   onClick={handleLove}
                   sx={{

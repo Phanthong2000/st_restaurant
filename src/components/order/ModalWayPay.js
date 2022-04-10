@@ -73,7 +73,6 @@ function ModalWayPay({ payment }) {
   };
   const handleChangeText = (e) => {
     e.preventDefault();
-    console.log(e.target.value.length);
     if (e.target.value.match(`^[0-9 ]{0,}$`))
       if (e.target.value.length < input.length) {
         setInput(e.target.value);

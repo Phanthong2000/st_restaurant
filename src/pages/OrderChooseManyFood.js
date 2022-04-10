@@ -16,7 +16,8 @@ import {
   TableHead,
   TableRow,
   Tabs,
-  Typography
+  Typography,
+  TableFooter
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
@@ -25,7 +26,9 @@ import { useNavigate } from 'react-router-dom';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 import TypeFoodItem from '../components/food/TypeFoodItem';
 import { actionFoodGetTypeChosen } from '../redux/actions/foodAction';
-import { actionOrderSetFoodsMany } from '../redux/actions/orderAction';
+import { actionOrderModalInformation, actionOrderSetFoodsMany } from '../redux/actions/orderAction';
+import { actionUserSnackbar } from '../redux/actions/userAction';
+import ModalInformationFood from '../components/order/ModalInformationFood';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%'
@@ -54,10 +57,15 @@ const BoxTable = styled(Box)(({ theme }) => ({
   background: theme.palette.white,
   padding: '10px',
   display: 'flex',
+  borderRadius: '5px',
   [theme.breakpoints.down('md')]: {
     width: '98%',
     marginLeft: '1%'
   }
+}));
+const Total = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+  fontSize: '20px'
 }));
 const BoxSearch = styled(Box)(({ theme }) => ({
   width: '60%',
@@ -118,6 +126,17 @@ const ButtonSortPrice = styled(Button)(({ theme }) => ({
 const BoxAllFood = styled(Box)(({ theme }) => ({
   width: '90%',
   margin: '20px 5%'
+}));
+const ButtonPay = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(0.5, 3),
+  textTransform: 'none',
+  color: theme.palette.white,
+  background: theme.palette.main,
+  fontWeight: 'bold',
+  fontSize: '18px',
+  ':hover': {
+    background: theme.palette.mainHover
+  }
 }));
 function FoodItemOrder({ food, tab }) {
   const navigate = useNavigate();
@@ -205,6 +224,14 @@ function FoodItemOrder({ food, tab }) {
       color: theme.palette.white
     }
   }));
+  const seeInformation = () => {
+    dispatch(
+      actionOrderModalInformation({
+        status: true,
+        food
+      })
+    );
+  };
   const checkDescriptionLength = () => {
     if (food.moTa.length < 200) return `${food.moTa}`;
     return `${food.moTa.substring(0, 200)}...`;
@@ -223,6 +250,7 @@ function FoodItemOrder({ food, tab }) {
           .concat(foodsMany.slice(tab, foodsMany.length))
       )
     );
+    window.scrollTo({ left: 0, top: 200, behavior: 'smooth' });
   };
   if (isChosen) return null;
   return (
@@ -236,9 +264,24 @@ function FoodItemOrder({ food, tab }) {
             {`${food.donGia.toLocaleString('es-US')} vnđ`}
           </PriceFood>
         </BoxNamePrice>
+        <Box sx={{ width: '100', display: 'flex', alignItems: 'center', padding: '0px 10px' }}>
+          <Icon
+            style={{ color: 'red', width: '30px', height: '30px' }}
+            icon="ant-design:heart-twotone"
+          />
+          {!food.listKhachHangThichMonAn ? (
+            <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+              0 yêu thích
+            </Typography>
+          ) : (
+            <Typography sx={{ color: 'gray', fontWeight: 'bold', marginLeft: '5px' }}>
+              {`${food.listKhachHangThichMonAn.length} yêu thích`}
+            </Typography>
+          )}
+        </Box>
         <Typography maxHeight="120px">{checkDescriptionLength()}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ButtonSeeInformation>Xem thông tin</ButtonSeeInformation>
+          <ButtonSeeInformation onClick={seeInformation}>Xem thông tin</ButtonSeeInformation>
           <ButtonChooseFood onClick={chooseFood}>Chọn món</ButtonChooseFood>
         </Box>
       </BoxFood>
@@ -293,8 +336,7 @@ function TableTab({ table, value }) {
   const foodsMany = useSelector((state) => state.order.foodsMany);
   const dispatch = useDispatch();
   const BoxTable = styled(Box)(({ theme }) => ({
-    width: '100%',
-    marginLeft: '20px'
+    width: '100%'
   }));
   const Title = styled(Typography)(({ theme }) => ({
     fontWeight: 'bold',
@@ -347,6 +389,13 @@ function TableTab({ table, value }) {
       width: '10%'
     }
   ];
+  const getTotalTab = () => {
+    let total = 0;
+    foodsMany.at(value - 1).foods.forEach((food) => {
+      total += food.food.donGia * food.soLuong;
+    });
+    return total;
+  };
   const deleteFoodChosen = (food) => {
     let data = foodsMany.at(value - 1);
     data = {
@@ -362,15 +411,65 @@ function TableTab({ table, value }) {
       )
     );
   };
+  const plusQuantity = (food, index) => {
+    let data = foodsMany.at(value - 1);
+    const temp = data.foods.filter((item) => item.food.id === food.id);
+    const newFood = {
+      ...temp.at(0),
+      soLuong: temp.at(0).soLuong + 1
+    };
+    data = {
+      ...data,
+      foods: data.foods
+        .slice(0, index)
+        .concat([newFood])
+        .concat(data.foods.slice(index + 1, data.foods.length))
+    };
+    dispatch(
+      actionOrderSetFoodsMany(
+        foodsMany
+          .slice(0, value - 1)
+          .concat([data])
+          .concat(foodsMany.slice(value, foodsMany.length))
+      )
+    );
+  };
+  const minusQuantity = (food, index) => {
+    let data = foodsMany.at(value - 1);
+    const temp = data.foods.filter((item) => item.food.id === food.id);
+    if (temp.at(0).soLuong === 1) {
+      deleteFoodChosen(food);
+    } else {
+      const newFood = {
+        ...temp.at(0),
+        soLuong: temp.at(0).soLuong - 1
+      };
+      data = {
+        ...data,
+        foods: data.foods
+          .slice(0, index)
+          .concat([newFood])
+          .concat(data.foods.slice(index + 1, data.foods.length))
+      };
+      dispatch(
+        actionOrderSetFoodsMany(
+          foodsMany
+            .slice(0, value - 1)
+            .concat([data])
+            .concat(foodsMany.slice(value, foodsMany.length))
+        )
+      );
+    }
+  };
   if (table.order !== value) return null;
   return (
     <BoxTable>
       <Title>
         Số người mỗi bàn: {table.soNguoiMoiBan} - Số bàn: {table.soLuongBan}
       </Title>
-      <Box sx={{ width: '100%', border: `1px solid lightgrey`, borderRadius: '5px' }}>
+      <Box sx={{ width: '100%' }}>
         <TableContainer>
-          <Table>
+          <Table sx={{ border: `1px solid lightgrey` }}>
             <TableHead>
               <TableRow>
                 {headers.map((item, index) => (
@@ -385,14 +484,18 @@ function TableTab({ table, value }) {
                 <TableRow key={index}>
                   <CellBody>{index + 1}</CellBody>
                   <CellBody>{item.food.tenMonAn}</CellBody>
-                  <CellBody>{item.food.donGia}</CellBody>
+                  <CellBody>{item.food.donGia.toLocaleString(`es-US`)}</CellBody>
                   <CellBody>
                     <Box sx={{ display: 'flex' }}>
-                      <IconQuantity icon="akar-icons:circle-minus-fill" />
+                      <IconQuantity
+                        onClick={() => minusQuantity(item.food, index)}
+                        icon="akar-icons:circle-minus-fill"
+                      />
                       <Typography sx={{ width: '30px', textAlign: 'center' }}>
                         {item.soLuong}
                       </Typography>
                       <IconQuantity
+                        onClick={() => plusQuantity(item.food, index)}
                         style={{ color: 'lightgreen' }}
                         icon="akar-icons:circle-plus-fill"
                       />
@@ -408,7 +511,24 @@ function TableTab({ table, value }) {
                   </CellBody>
                 </TableRow>
               ))}
+              {foodsMany.at(table.order - 1).foods.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    sx={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                  >
+                    Khách hàng chưa chọn món ăn
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '20px' }} colSpan={6}>
+                  Tổng tiền món ăn của loại bàn {value}: {getTotalTab().toLocaleString(`es-US`)} vnd
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       </Box>
@@ -420,8 +540,10 @@ function OrderChooseManyFood() {
   const typeChosen = useSelector((state) => state.food.typeChosen);
   const typefoods = useSelector((state) => state.food.typefoods);
   const foodsMany = useSelector((state) => state.order.foodsMany);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [tab, setTab] = useState(1);
+  const modalInformationFood = useSelector((state) => state.order.modalInformationFood);
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
@@ -432,6 +554,37 @@ function OrderChooseManyFood() {
         name: 'all'
       })
     );
+  };
+  const getTotal = () => {
+    let total = 0;
+    foodsMany.forEach((item) => {
+      item.foods.forEach((food) => {
+        total += food.food.donGia * food.soLuong;
+      });
+    });
+    return total;
+  };
+  const handlePay = () => {
+    let temp = 0;
+    let flagStop = false;
+    foodsMany.forEach((item) => {
+      if (item.foods.length === 0 && !flagStop) {
+        temp = item.order;
+        flagStop = true;
+      }
+    });
+    console.log(temp);
+    if (temp > 0) {
+      dispatch(
+        actionUserSnackbar({
+          status: true,
+          content: `Vui lòng chọn món ăn cho loại bàn ${temp}`,
+          type: 'error'
+        })
+      );
+    } else {
+      navigate('/home/order-payment-many');
+    }
   };
   return (
     <RootStyle>
@@ -513,9 +666,23 @@ function OrderChooseManyFood() {
               <Tab value={item.order} key={index} label={`Loại ${item.order}`} />
             ))}
           </Tabs>
-          {bookMany.listLoaiBan.map((item, index) => (
-            <TableTab key={index} table={item} value={tab} />
-          ))}
+          <Box sx={{ width: '100%', padding: '20px' }}>
+            {bookMany.listLoaiBan.map((item, index) => (
+              <TableTab key={index} table={item} value={tab} />
+            ))}
+            <Box
+              sx={{
+                width: '100%',
+                marginTop: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Total>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnd</Total>
+              <ButtonPay onClick={handlePay}>Tiếp tục</ButtonPay>
+            </Box>
+          </Box>
         </BoxTable>
         <BoxSearch>
           <InputSearch fullWidth placeholder="Tìm kiếm món ăn" />
@@ -550,6 +717,7 @@ function OrderChooseManyFood() {
           )}
         </BoxAllFood>
       </Box>
+      {modalInformationFood.status && <ModalInformationFood tab={tab} />}
     </RootStyle>
   );
 }

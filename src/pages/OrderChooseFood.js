@@ -348,11 +348,11 @@ function OrderChooseFood() {
                 </TableBody>
                 <TableFooter>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '20px', color: '#000' }}>
-                      Tổng tiền:
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '20px', color: '#000' }}>
-                      {`${getTotal().toLocaleString('es-US')} vnd`}
+                    <TableCell
+                      colSpan={2}
+                      sx={{ fontWeight: 'bold', fontSize: '20px', color: '#000' }}
+                    >
+                      Tổng tiền: {`${getTotal().toLocaleString('es-US')} vnd`}
                     </TableCell>
                     <TableCell sx={{ textAlign: 'right' }} colSpan={4}>
                       <ButtonPay onClick={payForOrder}>Tiếp tục</ButtonPay>
