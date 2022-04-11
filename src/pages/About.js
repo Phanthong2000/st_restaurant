@@ -6,6 +6,7 @@ import MenuAbout from '../components/about/MenuAbout';
 import menu from '../assets/data/menu';
 import BoxBreadcrumbs from '../components/BoxBreadcrumbs';
 import Map from '../components/map/Map';
+import Contact from './Contact';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -194,7 +195,9 @@ function About() {
           </Box>
         </Box>
       </BoxContact>
+      <Map />
       <BoxMenu />
+      <Contact />
     </RootStyle>
   );
 }

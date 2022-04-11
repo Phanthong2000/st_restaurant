@@ -14,10 +14,6 @@ const navbarConfig = [
   {
     title: 'Nhà hàng',
     path: '/home/about'
-  },
-  {
-    title: 'Liên hệ',
-    path: '/home/contact'
   }
 ];
 

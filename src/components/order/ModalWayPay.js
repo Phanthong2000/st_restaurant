@@ -49,11 +49,12 @@ const ButtonPayment = styled(Button)(({ theme }) => ({
   }
 }));
 ModalWayPay.prototype = {
-  payment: PropTypes.func
+  payment: PropTypes.func,
+  getTotal: PropTypes.func
 };
-function ModalWayPay({ payment }) {
+function ModalWayPay({ payment, getTotal }) {
   const modalWayPay = useSelector((state) => state.order.modalWayPay);
-  const foods = useSelector((state) => state.order.foods);
+  // const foods = useSelector((state) => state.order.foods);
   const temp = 'XXXX XXXX XXXX XXXX';
   const tempValid = 'mm/yy';
   const [name, setName] = useState('');
@@ -61,16 +62,16 @@ function ModalWayPay({ payment }) {
   const [input, setInput] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
-  const getTotal = () => {
-    if (foods.length === 0) {
-      return 0;
-    }
-    let total = 0;
-    foods.forEach((food) => {
-      total += food.food.donGia * food.quantity;
-    });
-    return total;
-  };
+  // const getTotal = () => {
+  //   if (foods.length === 0) {
+  //     return 0;
+  //   }
+  //   let total = 0;
+  //   foods.forEach((food) => {
+  //     total += food.food.donGia * food.quantity;
+  //   });
+  //   return total;
+  // };
   const handleChangeText = (e) => {
     e.preventDefault();
     if (e.target.value.match(`^[0-9 ]{0,}$`))
@@ -144,7 +145,7 @@ function ModalWayPay({ payment }) {
       <BoxModal>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Title>Nhập thông tin thẻ</Title>
-          <OtherWayPay>Chọn phương thức thanh toán khác</OtherWayPay>
+          <OtherWayPay onClick={handleClose}>Chọn phương thức thanh toán khác</OtherWayPay>
         </Box>
         <Divider sx={{ margin: '10px 0px' }} />
         <Box

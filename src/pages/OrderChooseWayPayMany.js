@@ -10,7 +10,8 @@ import {
   actionModalWayPay,
   actionOrderGetAllBooks,
   actionOrderGetOrderMany,
-  actionOrderSetFoodsMany
+  actionOrderSetFoodsMany,
+  actionOrderSuccess
 } from '../redux/actions/orderAction';
 import atms from '../assets/data/atms';
 import wayPays from '../assets/data/wayPays';
@@ -18,6 +19,7 @@ import ModalWayPay from '../components/order/ModalWayPay';
 
 import api from '../assets/api/api';
 import { actionUserBackdrop, actionUserSnackbar } from '../redux/actions/userAction';
+import { sendBookSocket } from '../util/wssConnection';
 
 const heightScreen = window.innerHeight - 1;
 const RootStyle = styled(Box)(({ theme }) => ({
@@ -221,6 +223,12 @@ function OrderChooseWayPayMany() {
     }
   };
   const confirmPayment = () => {
+    const allSocketAdmin = [];
+    broadcast.forEach((broad) => {
+      if (broad.type === 'admin') {
+        allSocketAdmin.push(broad.socketId);
+      }
+    });
     dispatch(
       actionUserBackdrop({
         status: true,
@@ -276,34 +284,61 @@ function OrderChooseWayPayMany() {
       )
       .then((res) => {
         dispatch(actionGetAllBooks(user.id));
-        dispatch(
-          actionUserBackdrop({
-            status: false,
-            content: 'Xử lý đơn đặt bàn'
-          })
-        );
-        dispatch(
-          actionUserSnackbar({
-            status: true,
-            content: 'Đặt bàn thành công',
-            type: 'success'
-          })
-        );
-        dispatch(actionOrderSetFoodsMany([]));
-        dispatch(
-          actionOrderGetOrderMany({
-            customerName: '',
-            email: '',
-            phone: '',
-            date: 0,
-            quantityCustomer: 0,
-            timeUse: 0,
-            area: {},
-            description: '',
-            listLoaiBan: []
-          })
-        );
-        navigate('order-success');
+        axios
+          .post(
+            `${api}thongBao/create`,
+            {
+              donDatBan: {
+                id: res.data.id
+              },
+              khachHang: {
+                id: user.id
+              },
+              loaiThongBao: 'Đặt bàn',
+              trangThai: 'Chưa đọc'
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+              }
+            }
+          )
+          .then((resNoti) => {
+            sendBookSocket({
+              socketIds: allSocketAdmin,
+              book: res.data,
+              notification: resNoti.data
+            });
+            dispatch(
+              actionUserBackdrop({
+                status: false,
+                content: 'Xử lý đơn đặt bàn'
+              })
+            );
+            dispatch(
+              actionUserSnackbar({
+                status: true,
+                content: 'Đặt bàn thành công',
+                type: 'success'
+              })
+            );
+            dispatch(actionOrderSetFoodsMany([]));
+            dispatch(
+              actionOrderGetOrderMany({
+                customerName: '',
+                email: '',
+                phone: '',
+                date: 0,
+                quantityCustomer: 0,
+                timeUse: 0,
+                area: {},
+                description: '',
+                listLoaiBan: []
+              })
+            );
+            dispatch(actionOrderSuccess(true));
+            navigate('/home/order-success');
+          });
       });
   };
   return (
@@ -376,7 +411,7 @@ function OrderChooseWayPayMany() {
           </Box>
         </BoxContentTotal>
       </BoxTotal>
-      {modalPayWay.status && <ModalWayPay payment={confirmPayment} />}
+      {modalPayWay.status && <ModalWayPay getTotal={getTotal} payment={confirmPayment} />}
     </RootStyle>
   );
 }

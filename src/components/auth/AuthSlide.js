@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, styled } from '@mui/material';
+import { Box, Button, styled } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '55%',
@@ -8,12 +9,34 @@ const RootStyle = styled(Box)(({ theme }) => ({
   borderRadius: '0px 20px 20px 0px',
   backgroundRepeat: 'no-repeat',
   backgroundSize: '100% 100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   [theme.breakpoints.down('sm')]: {
     display: 'none'
   }
 }));
+const ButtonGoHome = styled(Button)(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: 'bold',
+  fontSize: '16px',
+  fontFamily: theme.typography.fontFamily,
+  background: theme.palette.white,
+  color: theme.palette.main,
+  ':hover': {
+    background: theme.palette.white
+  }
+}));
 function AuthSlide() {
-  return <RootStyle> </RootStyle>;
+  const navigate = useNavigate();
+  const goToHome = () => {
+    navigate('/home/app');
+  };
+  return (
+    <RootStyle>
+      <ButtonGoHome onClick={goToHome}>Về trang chủ</ButtonGoHome>
+    </RootStyle>
+  );
 }
 
 export default AuthSlide;

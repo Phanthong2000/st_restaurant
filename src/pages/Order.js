@@ -232,6 +232,7 @@ function BoxType({ type, index, types, handleDeleteType, handleChooseQuantity, q
         (type) => parseInt(type.quantityPerTable, 10) === parseInt(quantityPerTableRef.current, 10)
       ).length > 0
     ) {
+      console.log(type.quantityPerTable, quantityPerTableRef.current);
       setContent('Số người mỗi bàn đã tồn tại');
       setVisible(true);
     } else if (
@@ -592,6 +593,13 @@ function Order() {
     if (text.match(`^[0-9]{0,}$`)) {
       setQuantityCustomer(text);
       setErrorQuantityCustomer('');
+      setType('one');
+      setTypes([
+        {
+          quantityPerTable: '',
+          quantityTable: ''
+        }
+      ]);
     } else {
       setErrorQuantityCustomer('Vui lòng nhập số người sử dụng');
     }
