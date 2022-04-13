@@ -46,14 +46,14 @@ const RootStyle = styled(Box)(({ theme }) => ({
 }));
 const BoxInformationCustomer = styled(Grid)(({ theme }) => ({
   width: '100%',
-  padding: theme.spacing(3, 10)
+  padding: theme.spacing(1, 2)
 }));
 const InputWapper = styled(Grid)(({ theme }) => ({
   width: '100%',
   alignItems: 'center',
-  padding: theme.spacing(2),
   borderRadius: '20px',
-  marginTop: '10px'
+  marginTop: '10px',
+  padding: '5px'
 }));
 const TitleInformation = styled(Typography)(({ theme }) => ({
   color: theme.palette.black
@@ -150,6 +150,41 @@ const ButtonPay = styled(Button)(({ theme }) => ({
     background: theme.palette.mainHover
   }
 }));
+const BoxTableItem = styled(Grid)(({ theme }) => ({
+  padding: '5px',
+  maxHeight: '150px',
+  display: 'flex'
+}));
+function TableItem({ table }) {
+  const BoxTable = styled(Grid)(({ theme }) => ({
+    width: '100%',
+    height: '100px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: `1px solid ${theme.palette.main}`
+  }));
+  const Title = styled(Typography)(({ theme }) => ({
+    fontSize: '14px',
+    color: theme.palette.gray,
+    fontWeight: 'bold'
+  }));
+  const IconTable = styled(Icon)(({ theme }) => ({
+    width: '40px',
+    height: '40px',
+    color: theme.palette.gray
+  }));
+  return (
+    <Grid sx={{ padding: '5px', width: '100%' }} item xs={4} sm={4} md={2} lg={2} xl={2}>
+      <BoxTable>
+        <Title>{table.tenBan}</Title>
+        <IconTable icon="ic:round-table-restaurant" />
+        <Title>Số người: {table.soNguoiToiDa}</Title>
+      </BoxTable>
+    </Grid>
+  );
+}
 function OrderChooseFood() {
   const typeChosen = useSelector((state) => state.food.typeChosen);
   const dispatch = useDispatch();
@@ -252,33 +287,19 @@ function OrderChooseFood() {
             Thông tin khách hàng đặt bàn
           </Typography>
         </Grid>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <TitleInformation sx={{ fontSize: '16px' }}>Họ tên:</TitleInformation>
           <InputInfo disabled value={book.customerName} fullWidth placeholder="Aa" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <TitleInformation sx={{ fontSize: '16px' }}>Email:</TitleInformation>
           <InputInfo disabled value={book.email} fullWidth placeholder="Aa" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <TitleInformation sx={{ fontSize: '16px' }}>Số điện thoại:</TitleInformation>
           <InputInfo disabled value={book.phone} fullWidth placeholder="0123456789" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
-          <Typography sx={{ fontSize: '16px' }}>Thời gian nhận bàn</Typography>
-          <DatePicker
-            disabled
-            customInput={<InputInfo fullWidth />}
-            selected={book.date}
-            showTimeSelect
-            dateFormat="dd/MM/yyyy, hh:mm a"
-            // onChange={(newValue) => {
-            //   console.log(newValue.getTime());
-            //   setDateUse(newValue);
-            // }}
-          />
-        </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian đặt bàn</Typography>
           <DatePicker
             disabled
@@ -292,22 +313,38 @@ function OrderChooseFood() {
             // }}
           />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
-          <Typography sx={{ fontSize: '16px' }}>Số khách:</Typography>
-          <InputInfo disabled value={book.quantityCustomer} fullWidth placeholder="0" />
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
+          <Typography sx={{ fontSize: '16px' }}>Thời gian nhận bàn</Typography>
+          <DatePicker
+            disabled
+            customInput={<InputInfo fullWidth />}
+            selected={book.date}
+            showTimeSelect
+            dateFormat="dd/MM/yyyy, hh:mm a"
+            // onChange={(newValue) => {
+            //   console.log(newValue.getTime());
+            //   setDateUse(newValue);
+            // }}
+          />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <Typography sx={{ fontSize: '16px' }}>Thời gian sử dụng:</Typography>
           <InputInfo disabled value={book.timeUse.name} fullWidth placeholder="0" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
-          <Typography sx={{ fontSize: '16px' }}>Khu vực:</Typography>
-          <InputInfo disabled value={book.area.tenKhuVuc} fullWidth placeholder="0" />
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
+          <Typography sx={{ fontSize: '16px' }}>Số khách:</Typography>
+          <InputInfo disabled value={book.quantityCustomer} fullWidth placeholder="0" />
         </InputWapper>
-        <InputWapper item xs={6} sm={6} md={6} lg={4} xl={4}>
+        <InputWapper item xs={6} sm={6} md={4} lg={3} xl={3}>
           <Typography sx={{ fontSize: '16px' }}>Ghi chú:</Typography>
           <InputInfo disabled value={book.description} fullWidth placeholder="Aa" />
         </InputWapper>
+        <Typography sx={{ fontSize: '16px', margin: '5px 5px 0px' }}>Danh sách bàn:</Typography>
+        <BoxTableItem container>
+          {book.listBan.map((item, index) => (
+            <TableItem key={item.id} table={item} />
+          ))}
+        </BoxTableItem>
       </BoxInformationCustomer>
       <Box sx={{ background: '#3d4045', width: '100%', padding: '20px 0px' }}>
         <BoxTable>

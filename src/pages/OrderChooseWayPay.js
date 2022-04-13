@@ -180,7 +180,19 @@ function OrderChooseWayPay() {
     if (book.customerName === '') navigate('/home/order');
     console.log('ok');
     return function () {
-      return null;
+      dispatch(
+        actionOrderGetOrder({
+          customerName: '',
+          email: '',
+          phone: '',
+          date: 0,
+          quantityCustomer: 0,
+          timeUse: 0,
+          listBan: [],
+          description: ''
+        })
+      );
+      dispatch(actionOrderSetFoods([]));
     };
   }, []);
   const getTotal = () => {
@@ -245,18 +257,22 @@ function OrderChooseWayPay() {
         ghiChu: 'Ban đầu'
       });
     });
+    const listBan = [];
+    book.listBan.forEach((item) => {
+      listBan.push({
+        id: item.id
+      });
+    });
     const order = {
       khachHang: {
         id: user.id
       },
-      soLuongKhach: book.quantityCustomer,
-      thoiGianDuKienSuDung: book.timeUse.time,
+      soLuongKhach: parseInt(book.quantityCustomer, 10),
+      thoiGianDuKienSuDung: book.timeUse.value,
       thoiGianNhanBan: moment(book.date).format(),
       trangThai: '0',
       ghiChu: book.description,
-      khuVuc: {
-        id: book.area.id
-      },
+      listBan: book.listBan,
       listChiTietDonDatBan
     };
     axios
@@ -272,6 +288,7 @@ function OrderChooseWayPay() {
         }
       )
       .then((res) => {
+        console.log(res.data);
         dispatch(actionGetAllBooks(user.id));
         axios
           .post(

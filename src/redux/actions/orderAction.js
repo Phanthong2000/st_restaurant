@@ -11,7 +11,8 @@ import {
   ACTION_ORDER_SUCCESS,
   ACTION_ORDER_MODAL_WAYPAY,
   ACTION_ORDER_GET_ORDER_MANY,
-  ACTION_ORDER_SET_FOODS_MANY
+  ACTION_ORDER_SET_FOODS_MANY,
+  ACTION_ORDER_MODAL_CHOOSE_AREA
 } from './types';
 
 export const actionOrderGetOrder = (data) => ({
@@ -56,6 +57,10 @@ export const actionOrderGetOrderMany = (data) => ({
 });
 export const actionOrderSetFoodsMany = (data) => ({
   type: ACTION_ORDER_SET_FOODS_MANY,
+  payload: data
+});
+export const actionOrderModalChooseArea = (data) => ({
+  type: ACTION_ORDER_MODAL_CHOOSE_AREA,
   payload: data
 });
 export const actionGetAllBooks = (id) => (dispatch) => {

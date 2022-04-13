@@ -9,7 +9,8 @@ import {
   ACTION_ORDER_SUCCESS,
   ACTION_ORDER_MODAL_WAYPAY,
   ACTION_ORDER_GET_ORDER_MANY,
-  ACTION_ORDER_SET_FOODS_MANY
+  ACTION_ORDER_SET_FOODS_MANY,
+  ACTION_ORDER_MODAL_CHOOSE_AREA
 } from '../actions/types';
 
 const defaultState = {
@@ -45,7 +46,11 @@ const defaultState = {
     description: '',
     listLoaiBan: []
   },
-  foodsMany: []
+  foodsMany: [],
+  modalChooseArea: {
+    status: false,
+    area: {}
+  }
 };
 
 // eslint-disable-next-line default-param-last
@@ -114,6 +119,11 @@ const orderReducer = (state = defaultState, action) => {
       return {
         ...state,
         foodsMany: action.payload
+      };
+    case ACTION_ORDER_MODAL_CHOOSE_AREA:
+      return {
+        ...state,
+        modalChooseArea: action.payload
       };
     default:
       return state;

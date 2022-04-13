@@ -80,7 +80,7 @@ function RowFood({ food, index }) {
     </TableRow>
   );
 }
-function TableFood({ loaiBan, tab }) {
+function TableFood({ listChiTietDonDatBan }) {
   const header = [
     {
       name: 'STT',
@@ -107,42 +107,28 @@ function TableFood({ loaiBan, tab }) {
       width: '15%'
     }
   ];
-  const getTotalTab = () => {
-    let total = 0;
-    loaiBan.listChiTietDonDatBan.forEach((food) => {
-      total += food.monAn.donGia * food.soLuong;
-    });
-    return total;
-  };
-  if (tab !== loaiBan.order) return null;
   return (
-    <>
-      <Typography
-        sx={{ width: '100%', padding: '10px 0px 0px 20px', fontWeight: 'bold', fontSize: '20px' }}
-      >
-        Số người mỗi bàn: {loaiBan.soNguoiMoiBan} - Số bàn: {loaiBan.soLuongBan}
-      </Typography>
-      <Card sx={{ width: '100%', marginTop: '10px' }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ background: 'gray' }}>
-                {header.map((item, index) => (
-                  <TableCell
-                    key={index}
-                    sx={{ width: item.width, color: '#fff', fontWeight: 'bold' }}
-                  >
-                    {item.name}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loaiBan.listChiTietDonDatBan.map((item, index) => (
-                <RowFood key={index} index={index} food={item} />
+    <Card sx={{ width: '100%', marginTop: '10px' }}>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ background: 'gray' }}>
+              {header.map((item, index) => (
+                <TableCell
+                  key={index}
+                  sx={{ width: item.width, color: '#fff', fontWeight: 'bold' }}
+                >
+                  {item.name}
+                </TableCell>
               ))}
-            </TableBody>
-            <TableFooter>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {listChiTietDonDatBan.map((item, index) => (
+              <RowFood key={index} index={index} food={item} />
+            ))}
+          </TableBody>
+          {/* <TableFooter>
               <TableRow>
                 <TableCell sx={{ textAlign: 'center' }} colSpan={6}>
                   <Typography sx={{ fontWeight: 'bold' }}>
@@ -150,15 +136,73 @@ function TableFood({ loaiBan, tab }) {
                   </Typography>
                 </TableCell>
               </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-      </Card>
-    </>
+            </TableFooter> */}
+        </Table>
+      </TableContainer>
+    </Card>
+  );
+}
+function TableTable({ listBan }) {
+  const Cell = styled(TableCell)(({ theme }) => ({
+    fontWeight: 'bold'
+  }));
+  const headers = [
+    {
+      name: 'STT',
+      width: '10%'
+    },
+    {
+      name: 'Tên bàn',
+      width: '40%'
+    },
+    {
+      name: 'Số người',
+      width: '30%'
+    },
+    {
+      name: 'Khu vực',
+      width: '20%'
+    }
+  ];
+  return (
+    <Card sx={{ width: '100%', marginTop: '10px' }}>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ background: 'gray' }}>
+              {headers.map((item, index) => (
+                <TableCell
+                  key={index}
+                  sx={{ width: item.width, color: '#fff', fontWeight: 'bold' }}
+                >
+                  {item.name}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {listBan.map((item, index) => (
+              <TableRow
+                sx={
+                  index % 2 === 0
+                    ? { background: 'lightgrey', color: '#fff' }
+                    : { background: '#fff', color: '#000' }
+                }
+                key={index}
+              >
+                <Cell>{index + 1}</Cell>
+                <Cell>{item.tenBan}</Cell>
+                <Cell>{item.soNguoiToiDa}</Cell>
+                <Cell>{item.khuVuc.tenKhuVuc}</Cell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Card>
   );
 }
 function BookDetail({ book, back }) {
-  const [tab, setTab] = useState(book.listLoaiBan.at(0).order);
   const checkStatus = () => {
     if (
       book.trangThai === `0` &&
@@ -179,16 +223,14 @@ function BookDetail({ book, back }) {
   };
   const getTotal = () => {
     let total = 0;
-    book.listLoaiBan.forEach((loaiBan) => {
-      loaiBan.listChiTietDonDatBan.forEach((item) => {
-        total += item.monAn.donGia * item.soLuong;
-      });
+    book.listChiTietDonDatBan.forEach((item) => {
+      total += item.monAn.donGia * item.soLuong;
     });
     return total;
   };
-  const handleChangeTab = (event, newValue) => {
-    setTab(newValue);
-  };
+  // const handleChangeTab = (event, newValue) => {
+  //   setTab(newValue);
+  // };
   return (
     <RootStyle>
       <Title>Thông tin đơn đặt bàn</Title>
@@ -209,32 +251,33 @@ function BookDetail({ book, back }) {
         <ContentDetail>{checkStatus()}</ContentDetail>
       </BoxDetail>
       <BoxDetail>
-        <LabelDetail>Khu vực: </LabelDetail>
-        <ContentDetail>{book.khuVuc && book.khuVuc.tenKhuVuc}</ContentDetail>
-      </BoxDetail>
-      <BoxDetail>
         <LabelDetail>Thời gian đặt bàn: </LabelDetail>
         <ContentDetail>
           {moment(Date.parse(book.createAt)).format(`hh:mm a DD/MM/yyyy`)}
         </ContentDetail>
       </BoxDetail>
       <BoxDetail>
-        <LabelDetail>Số lượng loại bàn: {book.listLoaiBan.length}</LabelDetail>
+        <LabelDetail>Số lượng món ăn: {book.listChiTietDonDatBan.length} món</LabelDetail>
         <LabelDetail>Tổng tiền: {getTotal().toLocaleString(`es-US`)} vnđ</LabelDetail>
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Danh sách món ăn của đơn đặt bàn</LabelDetail>
       </BoxDetail>
       <Box sx={{ width: '100%' }}>
-        <Tabs value={tab} onChange={handleChangeTab}>
+        <TableFood listChiTietDonDatBan={book.listChiTietDonDatBan} />
+        {/* <Tabs value={tab} onChange={handleChangeTab}>
           {book.listLoaiBan.map((item, index) => (
             <Tab key={index} value={item.order} label={`Loại ${item.order}`} />
           ))}
         </Tabs>
         {book.listLoaiBan.map((item, index) => (
           <TableFood key={index} tab={tab} loaiBan={item} />
-        ))}
+        ))} */}
       </Box>
+      <BoxDetail>
+        <LabelDetail>Danh sách bàn</LabelDetail>
+      </BoxDetail>
+      <TableTable listBan={book.listBan} />
       <ButtonBack onClick={back}>Quay lại</ButtonBack>
     </RootStyle>
   );

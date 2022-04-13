@@ -411,7 +411,7 @@ function OrderChooseWayPayMany() {
           </Box>
         </BoxContentTotal>
       </BoxTotal>
-      {modalPayWay.status && <ModalWayPay getTotal={getTotal} payment={confirmPayment} />}
+      {/* {modalPayWay.status && <ModalWayPay getTotal={getTotal} payment={confirmPayment} />} */}
     </RootStyle>
   );
 }
