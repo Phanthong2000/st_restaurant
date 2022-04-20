@@ -317,19 +317,6 @@ function OrderChooseWayPay() {
               notification: resNoti.data
             });
             dispatch(
-              actionOrderGetOrder({
-                customerName: '',
-                email: '',
-                phone: '',
-                date: 0,
-                quantityCustomer: 0,
-                timeUse: 0,
-                description: '',
-                area: {}
-              })
-            );
-            dispatch(actionOrderSetFoods([]));
-            dispatch(
               actionUserBackdrop({
                 status: false,
                 content: 'Đang xử lý đặt bàn'

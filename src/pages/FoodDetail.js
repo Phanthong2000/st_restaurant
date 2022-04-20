@@ -94,7 +94,10 @@ const ButtonOrder = styled(Button)(({ theme }) => ({
   fontSize: '16px',
   fontWeight: 'bold',
   width: '50%',
-  marginLeft: '25%'
+  marginLeft: '25%',
+  ':hover': {
+    background: theme.palette.mainHover
+  }
 }));
 function FoodDetail() {
   const [food, setFood] = useState({});
