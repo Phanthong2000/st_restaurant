@@ -38,6 +38,7 @@ import {
 import PopoverAntd from '../components/PopoverAntd';
 import ModalChooseArea from '../components/order/ModalChooseArea';
 import { actionGetAreasForOrder } from '../redux/actions/areaAction';
+import ModalMapRestaurant from '../components/order/ModalMapRestaurant';
 
 const RootStyle = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -107,15 +108,6 @@ const BoxChooseHour = styled(Box)(({ theme }) => ({
     borderBottom: `2px solid #000`
   }
 }));
-const options = [
-  { name: '30p', value: 1800000 },
-  { name: '1h', value: 3600000 },
-  { name: '1h 30p', value: 5400000 },
-  { name: '2h', value: 7200000 },
-  { name: '2h 30p', value: 9000000 },
-  { name: '3h', value: 10800000 },
-  { name: '3h 30p', value: 12600000 }
-];
 const ButtonAdd = styled(Button)(({ theme }) => ({
   padding: theme.spacing(0.5, 2),
   textTransform: 'none',
@@ -321,6 +313,16 @@ function Order() {
   const [errorQuantityCustomer, setErrorQuantityCustomer] = useState('');
   const modalChooseArea = useSelector((state) => state.order.modalChooseArea);
   const [tables, setTables] = useState([]);
+  const modalMapRestaurant = useSelector((state) => state.order.modalMapRestaurant);
+  const [options, setOptions] = useState([
+    { name: '30p', value: 1800000 },
+    { name: '1h', value: 3600000 },
+    { name: '1h 30p', value: 5400000 },
+    { name: '2h', value: 7200000 },
+    { name: '2h 30p', value: 9000000 },
+    { name: '3h', value: 10800000 },
+    { name: '3h 30p', value: 12600000 }
+  ]);
   const [types, setTypes] = useState([
     {
       quantityPerTable: '',
@@ -581,7 +583,20 @@ function Order() {
     {
       name: '21:00',
       value: 75600000
+    },
+    {
+      name: '22:00',
+      value: 79200000
     }
+  ];
+  const tempOptions = [
+    { name: '30p', value: 1800000 },
+    { name: '1h', value: 3600000 },
+    { name: '1h 30p', value: 5400000 },
+    { name: '2h', value: 7200000 },
+    { name: '2h 30p', value: 9000000 },
+    { name: '3h', value: 10800000 },
+    { name: '3h 30p', value: 12600000 }
   ];
   const handleChangeQuantityCustomer = (text) => {
     if (text.match(`^[0-9]{0,}$`)) {
@@ -682,9 +697,31 @@ function Order() {
                     <Scrollbar alwaysShowTracks>
                       {hours.map((item, index) => {
                         const chooseHour = () => {
-                          setHour(item);
-                          setTables([]);
-                          handleCloseHour();
+                          if (item.value === 72000000) {
+                            setHour(item);
+                            setTime();
+                            setTables([]);
+                            handleCloseHour();
+                            setOptions(tempOptions.slice(0, 5));
+                          } else if (item.value === 75600000) {
+                            setHour(item);
+                            setTime();
+                            setTables([]);
+                            handleCloseHour();
+                            setOptions(tempOptions.slice(0, 3));
+                          } else if (item.value === 79200000) {
+                            setHour(item);
+                            setTime();
+                            setTables([]);
+                            handleCloseHour();
+                            setOptions(tempOptions.slice(0, 1));
+                          } else {
+                            setHour(item);
+                            setTime();
+                            setTables([]);
+                            handleCloseHour();
+                            setOptions(tempOptions);
+                          }
                         };
                         return (
                           <ListItemButton onClick={chooseHour} key={index}>
@@ -848,6 +885,7 @@ function Order() {
           </BoxInput>
         </BoxOrder>
       </Box>
+      {modalMapRestaurant && <ModalMapRestaurant />}
       {modalChooseArea.status && (
         <ModalChooseArea
           checkin={Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`))}

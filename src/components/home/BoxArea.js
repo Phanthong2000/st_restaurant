@@ -184,6 +184,7 @@ function Table({ table }) {
       <Wrapper>
         <Title>{table.tenBan}</Title>
         <IconTable icon="ic:round-table-restaurant" />
+        <Title>{table.loaiBan}</Title>
         <Title>Số người: {table.soNguoiToiDa}</Title>
       </Wrapper>
     </BoxTable>

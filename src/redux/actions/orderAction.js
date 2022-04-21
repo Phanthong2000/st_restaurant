@@ -12,7 +12,8 @@ import {
   ACTION_ORDER_MODAL_WAYPAY,
   ACTION_ORDER_GET_ORDER_MANY,
   ACTION_ORDER_SET_FOODS_MANY,
-  ACTION_ORDER_MODAL_CHOOSE_AREA
+  ACTION_ORDER_MODAL_CHOOSE_AREA,
+  ACTION_ORDER_MODAL_MAP_RESTAURANT
 } from './types';
 
 export const actionOrderGetOrder = (data) => ({
@@ -61,6 +62,10 @@ export const actionOrderSetFoodsMany = (data) => ({
 });
 export const actionOrderModalChooseArea = (data) => ({
   type: ACTION_ORDER_MODAL_CHOOSE_AREA,
+  payload: data
+});
+export const actionOrderModalMapRestaurant = (data) => ({
+  type: ACTION_ORDER_MODAL_MAP_RESTAURANT,
   payload: data
 });
 export const actionGetAllBooks = (id) => (dispatch) => {

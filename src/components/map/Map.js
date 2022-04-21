@@ -83,7 +83,7 @@ const ButtonUser = styled(Box)(({ theme }) => ({
 function LocationMarker({ setPositionUser, positionUser }) {
   const map = useMapEvents({
     click() {
-      map.flyTo([10.822161713134108, 106.68705530067601], 18);
+      map.flyTo([10.82484107266796, 106.70101104956196], 18);
     },
     mousemove() {
       if (positionUser.lat === undefined) {
@@ -102,7 +102,7 @@ function LocationMarker({ setPositionUser, positionUser }) {
   });
   return (
     <>
-      <Marker icon={markerCustom} position={[10.822161713134108, 106.68705530067601]}>
+      <Marker icon={markerCustom} position={[10.82484107266796, 106.70101104956196]}>
         <Popup>1/11/46 Đặng Thuỳ Trâm, phường 11, quận Bịnh Thạnh</Popup>
       </Marker>
       {positionUser.lat !== undefined && (
@@ -122,7 +122,7 @@ function EventsExample() {
       <Tooltip title="Vị trí nhà hàng">
         <ButtonHome
           onClick={() => {
-            map.flyTo([10.822161713134108, 106.68705530067601], 18);
+            map.flyTo([10.82484107266796, 106.70101104956196], 18);
           }}
         >
           <Icon icon="ion:storefront-sharp" />
@@ -141,7 +141,7 @@ function EventsExample() {
         markerZoomAnimation
         scrollWheelZoom
         whenCreated={setMap}
-        center={[10.822161713134108, 106.68705530067601]}
+        center={[10.82484107266796, 106.70101104956196]}
         zoom={18}
       >
         <TileLayer
@@ -150,7 +150,7 @@ function EventsExample() {
         />
         <LocationMarker positionUser={positionUser} setPositionUser={setPositionUser} />
         <CircleMarker
-          center={[10.822161713134108, 106.68705530067601]}
+          center={[10.82484107266796, 106.70101104956196]}
           pathOptions={{ color: 'red' }}
           radius={40}
         />
