@@ -172,7 +172,11 @@ function Area({ area, handleChooseArea, chosen, tablesChosen, quantityCustomer }
           cursor: status < quantityCustomer && 'not-allowed'
         }}
         onClick={() => {
-          if (status >= quantityCustomer) handleChooseArea(area);
+          if (
+            status >= quantityCustomer &&
+            tablesChosen.filter((item) => item.khuVuc.id !== area.id).length === 0
+          )
+            handleChooseArea(area);
         }}
       >
         {tablesChosen.filter((item) => item.khuVuc.id === area.id).length > 0 ? (

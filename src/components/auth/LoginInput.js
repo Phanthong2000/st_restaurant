@@ -95,6 +95,7 @@ function LoginInput() {
             localStorage.setItem('user', JSON.stringify(resKH.data));
             dispatch(actionAuthLoggedIn(true));
             dispatch(actionGetUser(resKH.data.id));
+            window.location.reload();
             navigate('/home/app');
           })
           .catch((err) => console.log(err));

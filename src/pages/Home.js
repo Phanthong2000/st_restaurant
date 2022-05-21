@@ -10,6 +10,7 @@ import sloganHome from '../assets/data/sloganHome';
 import SloganHome from '../components/home/SloganHome';
 import BoxTypoFoods from '../components/home/BoxTypoFoods';
 import BoxArea from '../components/home/BoxArea';
+import BoxNews from '../components/home/BoxNews';
 
 const heightScreen = window.innerHeight - 1;
 const widthScreen = window.innerWidth - 17;
@@ -110,6 +111,7 @@ function Home() {
       </BoxSlogan>
       <BoxTypoFoods />
       <BoxArea />
+      <BoxNews />
     </RootStyle>
   );
 }

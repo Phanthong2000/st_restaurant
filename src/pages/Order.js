@@ -127,7 +127,7 @@ const BoxTable = styled(Grid)(({ theme }) => ({
 function Table({ table }) {
   const BoxTable = styled(Grid)(({ theme }) => ({
     width: '100%',
-    height: '100px',
+    height: '120px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -149,6 +149,7 @@ function Table({ table }) {
       <BoxTable>
         <Title>{table.tenBan}</Title>
         <IconTable icon="ic:round-table-restaurant" />
+        <Title>{table.loaiBan}</Title>
         <Title>Số người: {table.soNguoiToiDa}</Title>
       </BoxTable>
     </Grid>
@@ -389,10 +390,10 @@ function Order() {
       Date.parse(moment(dateUse.getTime()).format(`MM/DD/YYYY`)) + hour.value <=
       new Date().getTime()
     )
-      setError('Ngày tháng, giờ phải sau hiện tại');
+      setError('Thời gian nhận bàn phải sau hiện tại');
+    else if (!time) setError('Vui lòng chọn thời gian sử dụng dự kiến');
     else if (!validator.isNumeric(quantityCustomer) || parseInt(quantityCustomer, 10) <= 0)
       setError('Số người sử dụng phải lớn hơn 0');
-    else if (!time) setError('Vui lòng chọn thời gian sử dụng dự kiến');
     // else if (type === 'many' && types.filter((type) => type.quantityPerTable === '').length > 0)
     //   setError('Vui lòng nhập các loại bàn muốn đặt');
     else if (tables.length === 0) {

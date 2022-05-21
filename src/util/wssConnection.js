@@ -9,7 +9,7 @@ import store from '../redux/store';
 let socket;
 export const connectWithSocket = () => {
   const { loggedIn } = store.getState().auth;
-  socket = io('https://st-restaurant-server.herokuapp.com/');
+  socket = io('http://localhost:3001/');
   store.dispatch(actionSocketGetSocket(socket));
   if (loggedIn)
     socket.on('broadcast', (data) => {

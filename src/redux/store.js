@@ -6,6 +6,7 @@ import foodReducer from './reducers/foodReducer';
 import orderReducer from './reducers/orderReducer';
 import userReducer from './reducers/userReducer';
 import socketReducer from './reducers/socketReducer';
+import newsReducer from './reducers/newsReducer';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
   order: orderReducer,
   auth: authReducer,
   area: areaReducer,
-  socket: socketReducer
+  socket: socketReducer,
+  news: newsReducer
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 export default store;

@@ -33,7 +33,7 @@ function HomeLayout() {
       <HomeNavbarHeader />
       <HomeNavbar />
       <MainStyle>
-        {!openChatBox ? <ButtonIconChatBox /> : <ChatBox />}
+        {/* {!openChatBox ? <ButtonIconChatBox /> : <ChatBox />} */}
         <Outlet />
         <BackdropUser />
         <Snack />

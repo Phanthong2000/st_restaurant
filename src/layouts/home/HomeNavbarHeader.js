@@ -112,13 +112,7 @@ function HomeNavbarHeader() {
     <RootStyle>
       <BoxContact>
         <Tooltip title="Facebook">
-          <IconContact
-            onClick={() => {
-              socketRef.current = socket;
-              socketRef.current.emit('test', { s: 'dsadsa' });
-            }}
-            icon="simple-line-icons:social-facebook"
-          />
+          <IconContact icon="simple-line-icons:social-facebook" />
         </Tooltip>
         <Tooltip title="Youtube">
           <IconContact icon="uit:youtube" />

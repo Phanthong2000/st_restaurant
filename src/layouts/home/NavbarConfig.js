@@ -12,6 +12,10 @@ const navbarConfig = [
     path: '/home/food'
   },
   {
+    title: 'Tin tức',
+    path: '/home/news'
+  },
+  {
     title: 'Nhà hàng',
     path: '/home/about'
   }

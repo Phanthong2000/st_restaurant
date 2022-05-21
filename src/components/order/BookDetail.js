@@ -231,6 +231,13 @@ function BookDetail({ book, back }) {
     book.listChiTietDonDatBan.forEach((item) => {
       total += item.monAn.donGia * item.soLuong;
     });
+    return total + book.listBan.filter((table) => table.loaiBan === 'Vip').length * 100000;
+  };
+  const getTotalFood = () => {
+    let total = 0;
+    book.listChiTietDonDatBan.forEach((item) => {
+      total += item.monAn.donGia * item.soLuong;
+    });
     return total;
   };
   // const handleChangeTab = (event, newValue) => {
@@ -267,6 +274,7 @@ function BookDetail({ book, back }) {
       </BoxDetail>
       <BoxDetail>
         <LabelDetail>Danh sách món ăn của đơn đặt bàn</LabelDetail>
+        <LabelDetail>Tổng tiền món ăn: {getTotalFood().toLocaleString(`es-US`)} vnđ</LabelDetail>
       </BoxDetail>
       <Box sx={{ width: '100%' }}>
         <TableFood listChiTietDonDatBan={book.listChiTietDonDatBan} />
@@ -281,6 +289,13 @@ function BookDetail({ book, back }) {
       </Box>
       <BoxDetail>
         <LabelDetail>Danh sách bàn</LabelDetail>
+        <LabelDetail>
+          Tổng tiền phụ thu:{' '}
+          {(book.listBan.filter((table) => table.loaiBan === 'Vip').length * 100000).toLocaleString(
+            `es-US`
+          )}{' '}
+          vnđ
+        </LabelDetail>
       </BoxDetail>
       <TableTable listBan={book.listBan} />
       <ButtonBack onClick={back}>Quay lại</ButtonBack>
