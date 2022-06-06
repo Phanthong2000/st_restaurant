@@ -4,6 +4,9 @@ import { Box, Button, IconButton, styled, Tooltip, Typography } from '@mui/mater
 import L from 'leaflet';
 import './Map.css';
 import { Icon } from '@iconify/react';
+import { useDispatch, useSelector } from 'react-redux';
+import ModalMapRestaurant from '../order/ModalMapRestaurant';
+import { actionOrderModalMapRestaurant } from '../../redux/actions/orderAction';
 
 const RootStyle = styled('div')(({ theme }) => ({
   width: '100%',
@@ -47,6 +50,27 @@ const ButtonUser = styled(Box)(({ theme }) => ({
   background: theme.palette.white,
   zIndex: 998,
   top: 150,
+  left: '15px',
+  position: 'absolute',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '10px',
+  outline: `1px solid gray`,
+  cursor: 'pointer',
+  ':hover': {
+    background: theme.palette.lightgrey
+  },
+  [theme.breakpoints.down('md')]: {
+    left: '17px'
+  }
+}));
+const ButtonMapRestaurant = styled(Box)(({ theme }) => ({
+  width: '40px',
+  height: '40px',
+  background: theme.palette.white,
+  zIndex: 998,
+  top: 210,
   left: '15px',
   position: 'absolute',
   display: 'flex',
@@ -117,6 +141,7 @@ function LocationMarker({ setPositionUser, positionUser }) {
 function EventsExample() {
   const [map, setMap] = useState();
   const [positionUser, setPositionUser] = useState({});
+  const dispatch = useDispatch();
   return (
     <IconButton disableFocusRipple disableRipple disableTouchRipple sx={{ width: '100%' }}>
       <Tooltip title="Vị trí nhà hàng">
@@ -136,6 +161,11 @@ function EventsExample() {
         >
           <Icon icon="ic:baseline-person-pin-circle" />
         </ButtonUser>
+      </Tooltip>
+      <Tooltip title="Bản đồ nhà hàng">
+        <ButtonMapRestaurant onClick={() => dispatch(actionOrderModalMapRestaurant(true))}>
+          <Icon icon="gis:statistic-map" />
+        </ButtonMapRestaurant>
       </Tooltip>
       <MapContainer
         markerZoomAnimation
@@ -159,11 +189,13 @@ function EventsExample() {
   );
 }
 function Map() {
+  const modalMapRestaurant = useSelector((state) => state.order.modalMapRestaurant);
   return (
     <RootStyle id="map">
       <Title>Địa điểm nhà hàng</Title>
       {/* <Position /> */}
       <EventsExample />
+      {modalMapRestaurant && <ModalMapRestaurant />}
     </RootStyle>
   );
 }
